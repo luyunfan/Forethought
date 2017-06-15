@@ -112,4 +112,6 @@ public interface Data<T> {
      * @return 数据集合中元素数量
      */
     long count();
+
 }
+
