@@ -5,11 +5,22 @@ import com.yunfan.forethought.type.Tuple;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * 代表键值对(Key, Value)的Data结构
  */
 public interface PairData<K, V> extends Data {
+
+    /**
+     * 将PairData转换为普通的Data结构
+     *
+     * @param mapFunc 进行转换映射的函数，输入参数为Tuple，返回值为单一类型的值
+     * @param <T>     Data结构的数据类型
+     * @return 返回包含映射函数返回值的Data对象
+     */
+    <T> Data<T> mapToNormal(Function<? super Tuple<K, V>, ? extends T> mapFunc);
+
     /**
      * 对同一Key的元素进行reduce归并操作，得到归并后的PairData
      *
