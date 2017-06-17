@@ -1,9 +1,10 @@
 package com.yunfan.forethought.api;
 
-import java.util.Collection;
+import com.yunfan.forethought.type.Tuple;
+
 import java.util.List;
 import java.util.Set;
-import java.util.function.BinaryOperator;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -31,6 +32,25 @@ public interface Data<T> {
      */
     <R> Data<R> map(Function<? super T, ? extends R> mapFunc);
 
+
+    /**
+     * 将Data映射为键值对Data结构
+     *
+     * @param mapFunc 对每个元素执行的映射变换函数，必须映射为Tuple类型
+     * @param <K>     Tuple的Key类型
+     * @param <V>     Tuple的Value类型
+     * @return 被变换后的PairData集合
+     */
+    <K, V> PairData<K, V> mapToPair(Function<? super T, ? extends Tuple<K, V>> mapFunc);
+
+    /**
+     * 对本集合中每一个元素执行映射操作，映射后为同样的集合，本方法将会把这些类似的集合压扁，将元素取出，整合为同一个集合返回
+     *
+     * @param mapFunc 对每个元素执行的映射变换函数，函数输入参数为当前迭代元素，返回值为变换后的包含元素的Data对象
+     * @param <R>     被转换后生成的元素类型
+     * @return 被变换后的元素集合
+     */
+    <R> Data<R> flatMap(Function<? super T, ? extends Data<? extends R>> mapFunc);
 
     /**
      * 对本集合进行去重操作
@@ -83,7 +103,7 @@ public interface Data<T> {
      * @param reduceFunc 对每两个元素进行互相归并的函数
      * @return 归并后计算得出的结果
      */
-    T reduce(BinaryOperator<T> reduceFunc);
+    T reduce(BiFunction<T, T, T> reduceFunc);
 
     /**
      * 将集合中所有元素添加到数组中，返回数组
@@ -112,6 +132,4 @@ public interface Data<T> {
      * @return 数据集合中元素数量
      */
     long count();
-
 }
-
