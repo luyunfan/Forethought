@@ -1,7 +1,5 @@
 package com.yunfan.forethought.utils;
 
-import com.yunfan.forethought.api.Data;
-
 /**
  * 创建Data数据的工具类
  */
