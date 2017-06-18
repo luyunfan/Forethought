@@ -5,6 +5,7 @@ import com.yunfan.forethought.type.Tuple;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -132,4 +133,11 @@ public interface Monad<T> {
      * @return 数据集合中元素数量
      */
     long count();
+
+    /**
+     * 遍历数据集合中的所有元素
+     *
+     * @param forFunc 遍历时执行的操作
+     */
+    void forecah(Consumer<? super T> forFunc);
 }
