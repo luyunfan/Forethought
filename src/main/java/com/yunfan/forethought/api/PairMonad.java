@@ -10,7 +10,7 @@ import java.util.function.Function;
 /**
  * 代表键值对(Key, Value)的Monad结构
  */
-public interface PairMonad<K, V> extends Monad {
+public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
 
     /**
      * 将PairMonad转换为普通的Monad结构

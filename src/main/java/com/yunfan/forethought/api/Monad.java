@@ -139,5 +139,5 @@ public interface Monad<T> {
      *
      * @param forFunc 遍历时执行的操作
      */
-    void forecah(Consumer<? super T> forFunc);
+    void foreach(Consumer<? super T> forFunc);
 }
