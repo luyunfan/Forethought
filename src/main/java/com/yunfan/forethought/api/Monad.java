@@ -35,16 +35,6 @@ public interface Monad<T> {
 
 
     /**
-     * 将Monad映射为键值对Monad结构
-     *
-     * @param mapFunc 对每个元素执行的映射变换函数，必须映射为Tuple类型
-     * @param <K>     Tuple的Key类型
-     * @param <V>     Tuple的Value类型
-     * @return 被变换后的PairMonad集合
-     */
-    <K, V> PairMonad<K, V> mapToPair(Function<? super T, ? extends Tuple<K, V>> mapFunc);
-
-    /**
      * 对本集合中每一个元素执行映射操作，映射后为同样的集合，本方法将会把这些类似的集合压扁，将元素取出，整合为同一个集合返回
      *
      * @param mapFunc 对每个元素执行的映射变换函数，函数输入参数为当前迭代元素，返回值为变换后的包含元素的Monad对象

@@ -8,5 +8,6 @@ import org.junit.Test;
 public class MonadTest {
     @Test
     public void testMonad() {
+
     }
 }
