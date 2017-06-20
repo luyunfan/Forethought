@@ -1,7 +1,5 @@
 package com.yunfan.forethought.api;
 
-import com.yunfan.forethought.type.Tuple;
-
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -23,6 +21,22 @@ public interface Monad<T> {
      * @return 被过滤后的元素集合
      */
     Monad<T> filter(Predicate<? super T> predicate);
+
+    /**
+     * 检测所有元素是否都符合输入验证函数的要求
+     *
+     * @param predicate 验证要求函数，输入当前元素，返回Boolean值
+     * @return 是否所有元素都能通过检测
+     */
+    boolean all(Predicate<? super T> predicate);
+
+    /**
+     * 检测任一元素是否符合输入验证函数的要求
+     *
+     * @param predicate 验证要求函数，输入当前元素，返回Boolean值
+     * @return 只要有元素能通过检测就返回true，否则返回false
+     */
+    boolean any(Predicate<? super T> predicate);
 
     /**
      * 对本集合每一个元素进行映射操作，将元素映射成不同的类型
@@ -55,38 +69,30 @@ public interface Monad<T> {
      *
      * @return 取出一个元素后的元素集合
      */
-    Monad<T> take();
+    Monad<T> drop();
 
     /**
      * 从集合起始端取出一些元素组成集合
      *
-     * @param takeNum 需要取出的元素数量
+     * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    Monad<T> take(int takeNum);
+    Monad<T> drop(int dropNum);
 
     /**
      * 从集合末端取出一个元素组成集合
      *
      * @return 取出一个元素后的元素集合
      */
-    Monad<T> takeRight();
+    Monad<T> dropRight();
 
     /**
      * 从集合末端取出一些元素组成集合
      *
-     * @param takeNum 需要取出的元素数量
+     * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    Monad<T> takeRight(int takeNum);
-
-    /**
-     * 对其它同类型数据集合相连接，连接后将合并所有数据到一个新数据集合中
-     *
-     * @param other 其它同类型数据集合
-     * @return 合并后的数据集合
-     */
-    Monad<T> union(Monad<? extends T> other);
+    Monad<T> dropRight(int dropNum);
 
     /**
      * 将集合中的所有数据相互进行归并操作，计算出归并的最终值

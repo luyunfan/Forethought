@@ -15,7 +15,7 @@ public class Tuple<K, V> {
     /**
      * 代表键值对中的值
      */
-    private V value;
+    private final V value;
 
     /**
      * 构造函数，初始化元组数据

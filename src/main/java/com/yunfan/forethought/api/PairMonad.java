@@ -37,6 +37,21 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
     Map<K, Long> countByKey();
 
     /**
+     * 取出集合第一个元素
+     *
+     * @return 第一个元素组成的Tuple
+     */
+    Tuple<K, V> first();
+
+    /**
+     * 取出集合一些元素组成Map返回
+     *
+     * @param takeNum 取出的元素数量
+     * @return 取出的元素组成的Map对象
+     */
+    Map<K, V> take(int takeNum);
+
+    /**
      * 对其它Key相同的PairMonad执行内连接操作，得到连接后的PairMonad对象
      *
      * @param otherPairMonad 相同Key的其它PairMonad对象
@@ -51,4 +66,12 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @return 进行分组后的(Key, Collection)类型的PairMonad对象
      */
     PairMonad<K, Collection<V>> groupByKey();
+
+    /**
+     * 对其它同类型数据集合相连接，连接后将合并所有数据到一个新数据集合中
+     *
+     * @param other 其它同类型数据集合
+     * @return 合并后的数据集合
+     */
+    PairMonad<K, V> union(PairMonad<? extends K, ? extends V> other);
 }
