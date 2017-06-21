@@ -41,4 +41,11 @@ public interface SingleMonad<T> extends Monad<T> {
      * @return 合并后的数据集合
      */
     SingleMonad<T> union(Monad<? extends T> other);
+
+    /**
+     * 对本集合进行排序操作
+     *
+     * @return 排序后的集合
+     */
+    SingleMonad<T> sort();
 }

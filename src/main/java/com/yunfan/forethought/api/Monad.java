@@ -1,5 +1,6 @@
 package com.yunfan.forethought.api;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -63,6 +64,14 @@ public interface Monad<T> {
      * @return 去重后的元素集合
      */
     Monad<T> distinct();
+
+    /**
+     * 对本集合进行排序操作，自定义元素排序方法
+     *
+     * @param comparator 自定义comparator
+     * @return 排好序的集合
+     */
+    Monad<T> sortWith(Comparator<T> comparator);
 
     /**
      * 从集合起始端取出一个元素组成集合
