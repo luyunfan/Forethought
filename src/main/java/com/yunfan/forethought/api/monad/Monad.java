@@ -1,6 +1,7 @@
-package com.yunfan.forethought.api;
+package com.yunfan.forethought.api.monad;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -131,6 +132,13 @@ public interface Monad<T> {
      * @return 包含集合中所有数据的Set
      */
     Set<T> toSet();
+
+    /**
+     * 将集合中所有元素转化为迭代器
+     *
+     * @return 一个 Iterator对象
+     */
+    Iterator<T> toIterator();
 
     /**
      * 返回本数据集合中元素数量的方法

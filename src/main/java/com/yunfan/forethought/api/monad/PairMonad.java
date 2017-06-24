@@ -1,4 +1,4 @@
-package com.yunfan.forethought.api;
+package com.yunfan.forethought.api.monad;
 
 import com.yunfan.forethought.type.Tuple;
 
@@ -19,7 +19,7 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param <T>     Monad结构的数据类型
      * @return 返回包含映射函数返回值的Monad对象
      */
-    <T> SingleMonad<T> mapToNormal(Function<? super Tuple<K, V>, ? extends T> mapFunc);
+    <T> CommonMonad<T> mapToNormal(Function<? super Tuple<K, V>, ? extends T> mapFunc);
 
     /**
      * 对同一Key的元素进行reduce归并操作，得到归并后的PairMonad

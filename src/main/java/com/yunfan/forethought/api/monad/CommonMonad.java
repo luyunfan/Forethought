@@ -1,4 +1,4 @@
-package com.yunfan.forethought.api;
+package com.yunfan.forethought.api.monad;
 
 import com.yunfan.forethought.type.Tuple;
 
@@ -8,7 +8,7 @@ import java.util.function.Function;
 /**
  * 代表普通单元素Monad
  */
-public interface SingleMonad<T> extends Monad<T> {
+public interface CommonMonad<T> extends Monad<T> {
     /**
      * 将Monad映射为键值对Monad结构
      *
@@ -40,12 +40,12 @@ public interface SingleMonad<T> extends Monad<T> {
      * @param other 其它同类型数据集合
      * @return 合并后的数据集合
      */
-    SingleMonad<T> union(Monad<? extends T> other);
+    CommonMonad<T> union(Monad<? extends T> other);
 
     /**
      * 对本集合进行排序操作
      *
      * @return 排序后的集合
      */
-    SingleMonad<T> sort();
+    CommonMonad<T> sort();
 }

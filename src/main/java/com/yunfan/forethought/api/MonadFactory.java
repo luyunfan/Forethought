@@ -1,7 +1,8 @@
-package com.yunfan.forethought.api.factory;
+package com.yunfan.forethought.api;
 
-import com.yunfan.forethought.api.Monad;
-import com.yunfan.forethought.api.PairMonad;
+import com.yunfan.forethought.api.impls.SingleMonadFactory;
+import com.yunfan.forethought.api.monad.Monad;
+import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.type.Tuple;
 
 import java.io.InputStream;
@@ -15,6 +16,15 @@ import java.util.stream.Stream;
  * 代表创建Monad结构的工厂接口
  */
 public interface MonadFactory {
+
+    /**
+     * 创建单线程Monad工厂对象
+     *
+     * @return 一个单线程Monad工厂对象
+     */
+    static MonadFactory createSingleMonadFactory() {
+        return new SingleMonadFactory();
+    }
 
     /**
      * 通过Collection集合获取Monad
