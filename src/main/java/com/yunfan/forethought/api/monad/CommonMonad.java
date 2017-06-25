@@ -40,7 +40,7 @@ public interface CommonMonad<T> extends Monad<T> {
      * @param other 其它同类型数据集合
      * @return 合并后的数据集合
      */
-    CommonMonad<T> union(Monad<? extends T> other);
+    CommonMonad<? extends T> union(CommonMonad<? extends T> other);
 
     /**
      * 对本集合进行排序操作

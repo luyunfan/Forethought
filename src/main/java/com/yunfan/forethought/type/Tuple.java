@@ -1,5 +1,7 @@
 package com.yunfan.forethought.type;
 
+import com.sun.istack.internal.NotNull;
+
 /**
  * 元组类型，代表Key Value键值对
  *
@@ -23,7 +25,7 @@ public class Tuple<K, V> {
      * @param key   键
      * @param value 值
      */
-    public Tuple(K key, V value) {
+    public Tuple(@NotNull K key, @NotNull V value) {
         this.key = key;
         this.value = value;
     }

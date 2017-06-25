@@ -1,11 +1,12 @@
 package com.yunfan.forethought.api.impls;
 
+import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
+import com.yunfan.forethought.api.monad.PairMonad;
+import com.yunfan.forethought.type.Tuple;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -14,7 +15,14 @@ import java.util.function.Predicate;
 /**
  * 表示空列表
  */
-public class NilMonad<T> implements Monad<T> {
+public class NilMonad<T> implements CommonMonad<T> {
+
+    private Class<T> elementType;
+
+    NilMonad(Class<T> elementClass) {
+        elementType = elementClass;
+    }
+
     @Override
     public Monad<T> filter(Predicate<? super T> predicate) {
         return this;
@@ -32,8 +40,14 @@ public class NilMonad<T> implements Monad<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <R> Monad<R> map(Function<? super T, ? extends R> mapFunc) {
-        return (Monad<R>) this;
+    public <R> CommonMonad<R> map(Function<? super T, ? extends R> mapFunc) {
+//        try {
+//            return new NilMonad<R>(mapFunc(elementType.newInstance()).getClass());
+//        } catch (InstantiationException | IllegalAccessException e) {
+//            return (CommonMonad<R>) this;
+//            e.printStackTrace();
+//        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -74,27 +88,28 @@ public class NilMonad<T> implements Monad<T> {
 
     @Override
     public T reduce(BiFunction<T, T, T> reduceFunc) {
-        return null;
+        throw new UnsupportedOperationException("空集合");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T[] toArray() {
-        return (T[]) new Object[0];
+        return (T[]) Array.newInstance(elementType, 0);
     }
 
     @Override
     public List<T> toList() {
-        return null;
+        return new ArrayList<>(0);
     }
 
     @Override
     public Set<T> toSet() {
-        return null;
+        return new HashSet<>(0);
     }
 
     @Override
     public Iterator<T> toIterator() {
-        return null;
+        return Collections.emptyIterator();
     }
 
     @Override
@@ -104,5 +119,30 @@ public class NilMonad<T> implements Monad<T> {
 
     @Override
     public void foreach(Consumer<? super T> forFunc) {
+    }
+
+    @Override
+    public <K, V> PairMonad<K, V> mapToPair(Function<? super T, ? extends Tuple<K, V>> mapFunc) {
+        return new PairNilMonad<>();
+    }
+
+    @Override
+    public T first() {
+        throw new UnsupportedOperationException("空集合");
+    }
+
+    @Override
+    public List<T> take(int takeNum) {
+        return new ArrayList<>(0);
+    }
+
+    @Override
+    public CommonMonad<? extends T> union(CommonMonad<? extends T> other) {
+        return other;
+    }
+
+    @Override
+    public CommonMonad<T> sort() {
+        return this;
     }
 }

@@ -58,7 +58,7 @@ class SingleCommonMonad<T> implements CommonMonad<T> {
     }
 
     @Override
-    public CommonMonad<T> union(Monad<? extends T> other) {
+    public CommonMonad<? extends T> union(CommonMonad<? extends T> other) {
         return null;
     }
 
