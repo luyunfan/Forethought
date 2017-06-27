@@ -113,13 +113,6 @@ public interface Monad<T> {
     T reduce(BiFunction<T, T, T> reduceFunc);
 
     /**
-     * 将集合中所有元素添加到数组中，返回数组
-     *
-     * @return 包含集合中所有数据的数组
-     */
-    T[] toArray();
-
-    /**
      * 将集合中所有元素添加到List中，返回List
      *
      * @return 包含集合中所有数据的List
@@ -153,4 +146,11 @@ public interface Monad<T> {
      * @param forFunc 遍历时执行的操作
      */
     void foreach(Consumer<? super T> forFunc);
+
+    /**
+     * 代表集合是否为空
+     *
+     * @return 集合是否为空
+     */
+    boolean isEmpty();
 }

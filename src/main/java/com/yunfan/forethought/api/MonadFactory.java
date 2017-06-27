@@ -1,6 +1,8 @@
 package com.yunfan.forethought.api;
 
+import com.yunfan.forethought.api.impls.NilMonad;
 import com.yunfan.forethought.api.impls.SingleMonadFactory;
+import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.type.Tuple;
@@ -25,6 +27,14 @@ public interface MonadFactory {
     static MonadFactory createSingleMonadFactory() {
         return new SingleMonadFactory();
     }
+
+    /**
+     * 产生一个空的CommonMonad
+     *
+     * @param <T> Monad类型
+     * @return 一个空的CommonMonad
+     */
+    <T> CommonMonad<T> commonNil();
 
     /**
      * 通过Collection集合获取Monad
@@ -120,12 +130,13 @@ public interface MonadFactory {
     @SuppressWarnings("unchecked")
     <T> Monad<T> of(T... value);
 
+
     /**
      * 产生一个空Monad
      *
      * @return 一个空Monad
      */
-    Monad<?> of();
+    <T> Monad<T> of();
 
 //    static MonadFactory createSingleMonadFactory(){
 //

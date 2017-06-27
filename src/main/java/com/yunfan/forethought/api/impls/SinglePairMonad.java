@@ -106,6 +106,11 @@ class SinglePairMonad<K, V> implements PairMonad<K, V> {
     }
 
     @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
     public <T> CommonMonad<T> mapToNormal(Function<? super Tuple<K, V>, ? extends T> mapFunc) {
         return null;
     }

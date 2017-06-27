@@ -17,12 +17,6 @@ import java.util.function.Predicate;
  */
 public class NilMonad<T> implements CommonMonad<T> {
 
-    private Class<T> elementType;
-
-    NilMonad(Class<T> elementClass) {
-        elementType = elementClass;
-    }
-
     @Override
     public Monad<T> filter(Predicate<? super T> predicate) {
         return this;
@@ -41,19 +35,13 @@ public class NilMonad<T> implements CommonMonad<T> {
     @SuppressWarnings("unchecked")
     @Override
     public <R> CommonMonad<R> map(Function<? super T, ? extends R> mapFunc) {
-//        try {
-//            return new NilMonad<R>(mapFunc(elementType.newInstance()).getClass());
-//        } catch (InstantiationException | IllegalAccessException e) {
-//            return (CommonMonad<R>) this;
-//            e.printStackTrace();
-//        }
-        return null;
+        return (CommonMonad<R>) this;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <R> Monad<R> flatMap(Function<? super T, ? extends Monad<? extends R>> mapFunc) {
-        return (Monad<R>) this;
+    public <R> CommonMonad<R> flatMap(Function<? super T, ? extends Monad<? extends R>> mapFunc) {
+        return (CommonMonad<R>) this;
     }
 
     @Override
@@ -93,8 +81,8 @@ public class NilMonad<T> implements CommonMonad<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public T[] toArray() {
-        return (T[]) Array.newInstance(elementType, 0);
+    public T[] toArray(Class<T> arrayType) {
+        return (T[]) Array.newInstance(arrayType, 0);
     }
 
     @Override
@@ -119,6 +107,11 @@ public class NilMonad<T> implements CommonMonad<T> {
 
     @Override
     public void foreach(Consumer<? super T> forFunc) {
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
     }
 
     @Override

@@ -48,4 +48,12 @@ public interface CommonMonad<T> extends Monad<T> {
      * @return 排序后的集合
      */
     CommonMonad<T> sort();
+
+    /**
+     * 将集合中所有元素添加到数组中，返回数组
+     *
+     * @param arrayType 代表数组中元素类型
+     * @return 包含集合中所有数据的数组
+     */
+    T[] toArray(Class<T> arrayType);
 }

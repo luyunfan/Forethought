@@ -1,5 +1,6 @@
 package com.yunfan.forethought.api.impls;
 
+import com.sun.istack.internal.NotNull;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.api.monad.CommonMonad;
@@ -18,28 +19,33 @@ import java.util.function.Predicate;
 class SingleCommonMonad<T> implements CommonMonad<T> {
 
     /**
-     * 代表内部元素类型
-     */
-    private Class<T> elementClass;
-
-    /**
      * 代表第一个元素
      */
     private T head;
 
     /**
+     * 代表后续所有元素
+     */
+    private CommonMonad<T> tail;
+
+    /**
      * 创建单个元素的Monad
      *
-     * @param clazz 元素类型
      * @param first 首元素
      */
-    SingleCommonMonad(Class<T> clazz, T first) {
-        elementClass = clazz;
+    SingleCommonMonad(@NotNull T first) {
         head = first;
+        tail = new NilMonad<>();
     }
 
-    private boolean isEmpty() {
-        return true;
+    SingleCommonMonad(@NotNull T head, @NotNull CommonMonad<T> tail) {
+        this.head = head;
+        this.tail = tail;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 
     @Override
@@ -135,8 +141,8 @@ class SingleCommonMonad<T> implements CommonMonad<T> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public T[] toArray() {
-        return (T[]) Array.newInstance(elementClass, Math.toIntExact(count()));
+    public T[] toArray(Class<T> arrayType) {
+        return (T[]) Array.newInstance(arrayType, Math.toIntExact(count()));
     }
 
     @Override

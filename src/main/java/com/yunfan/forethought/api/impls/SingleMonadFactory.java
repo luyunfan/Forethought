@@ -1,6 +1,7 @@
 package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.MonadFactory;
+import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.type.Tuple;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -21,18 +23,27 @@ public final class SingleMonadFactory implements MonadFactory {
     }
 
     @Override
+    public <T> CommonMonad<T> commonNil() {
+        return new NilMonad<>();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public <T> Monad<T> from(Collection<T> collection) {
-        return null;
+        return from((T[]) collection.toArray());
     }
 
     @Override
-    public <T> Monad<T> from(T[] array) {
-        return null;
+    public <T> CommonMonad<T> from(T[] array) {
+        CommonMonad<T> newMonad = commonNil();  //最后的Monad为空
+        for (int i = array.length - 1; i >= 0; i--)
+            newMonad = new SingleCommonMonad<>(array[i], newMonad);
+        return newMonad;
     }
 
     @Override
     public <T> Monad<T> from(Stream<T> stream) {
-        return null;
+        return from(stream.collect(Collectors.toList()));
     }
 
     @Override
@@ -62,16 +73,17 @@ public final class SingleMonadFactory implements MonadFactory {
 
     @Override
     public <T> Monad<T> of(T value) {
-        return null;
+        return new SingleCommonMonad<>(value);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> Monad<T> of(T... value) {
+        return from(value);
     }
 
     @Override
-    public <T> Monad<T> of(T[] value) {
-        return null;
-    }
-
-    @Override
-    public Monad<?> of() {
-        return null;
+    public <T> Monad<T> of() {
+        return new NilMonad<>();
     }
 }
