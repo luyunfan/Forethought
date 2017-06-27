@@ -47,4 +47,46 @@ public class Tuple<K, V> {
     public V value() {
         return value;
     }
+
+    /**
+     * 通过静态方法创建Tuple
+     *
+     * @param <K> Key类型
+     * @param <V> Value类型
+     * @return 一个新的Tuple元祖
+     */
+    public static <K, V> Tuple create(K key, V value) {
+        return new Tuple<>(key, value);
+    }
+
+    /**
+     * 重写equals，判断两个对象是否相等
+     *
+     * @param other 需要和本对象判断的其他对象
+     * @return 两个对象是否相等
+     */
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof Tuple && ((Tuple) other).key == this.key && ((Tuple) other).value == this.value;
+    }
+
+    /**
+     * 重写的toString方法，将元祖转化为(key,value)的形式
+     *
+     * @return (key, value)的字符串
+     */
+    @Override
+    public String toString() {
+        return "(" + key + "," + value + ")";
+    }
+
+    /**
+     * 重写的hashCode方法，获取哈希值
+     *
+     * @return 本对象的hashCode
+     */
+    @Override
+    public int hashCode() {
+        return 31 * key.hashCode() + (value.hashCode());
+    }
 }

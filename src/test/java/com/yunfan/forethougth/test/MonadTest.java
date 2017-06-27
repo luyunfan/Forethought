@@ -3,11 +3,8 @@ package com.yunfan.forethougth.test;
 import com.yunfan.forethought.api.MonadFactory;
 import com.yunfan.forethought.api.impls.SingleMonadFactory;
 import com.yunfan.forethought.api.monad.CommonMonad;
-import com.yunfan.forethought.api.monad.Monad;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 
 /**

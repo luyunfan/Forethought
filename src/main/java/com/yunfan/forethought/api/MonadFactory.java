@@ -1,6 +1,5 @@
 package com.yunfan.forethought.api;
 
-import com.yunfan.forethought.api.impls.NilMonad;
 import com.yunfan.forethought.api.impls.SingleMonadFactory;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
@@ -137,8 +136,4 @@ public interface MonadFactory {
      * @return 一个空Monad
      */
     <T> Monad<T> of();
-
-//    static MonadFactory createSingleMonadFactory(){
-//
-//    }
 }
