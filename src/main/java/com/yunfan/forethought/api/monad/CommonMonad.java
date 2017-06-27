@@ -1,5 +1,7 @@
 package com.yunfan.forethought.api.monad;
 
+import com.yunfan.forethought.api.MonadFactory;
+import com.yunfan.forethought.api.impls.NilMonad;
 import com.yunfan.forethought.type.Tuple;
 
 import java.util.List;
@@ -56,4 +58,13 @@ public interface CommonMonad<T> extends Monad<T> {
      * @return 包含集合中所有数据的数组
      */
     T[] toArray(Class<T> arrayType);
+
+    /**
+     * 获取一个空Monad
+     *
+     * @return 一个空的Monad
+     */
+    default CommonMonad<T> empty() {
+        return MonadFactory.createSingleMonadFactory().commonNil();
+    }
 }

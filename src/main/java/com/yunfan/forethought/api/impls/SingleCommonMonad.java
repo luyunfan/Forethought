@@ -35,12 +35,16 @@ class SingleCommonMonad<T> implements CommonMonad<T> {
      */
     SingleCommonMonad(@NotNull T first) {
         head = first;
-        tail = new NilMonad<>();
+        tail = NilMonad.get();
     }
 
     SingleCommonMonad(@NotNull T head, @NotNull CommonMonad<T> tail) {
         this.head = head;
         this.tail = tail;
+    }
+
+    CommonMonad<T> tail() {
+        return tail;
     }
 
     @Override

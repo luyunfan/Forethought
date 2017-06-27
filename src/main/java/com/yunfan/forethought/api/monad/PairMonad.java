@@ -97,4 +97,8 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @return 包含集合中所有数据的数组
      */
     Tuple<K, V>[] toArray();
+
+//    default PairMonad<K,V> empty(){
+//        return
+//    }
 }

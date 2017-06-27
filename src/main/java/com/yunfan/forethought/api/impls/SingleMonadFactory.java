@@ -7,6 +7,7 @@ import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.type.Tuple;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,7 +25,7 @@ public final class SingleMonadFactory implements MonadFactory {
 
     @Override
     public <T> CommonMonad<T> commonNil() {
-        return new NilMonad<>();
+        return NilMonad.get();
     }
 
     @SuppressWarnings("unchecked")
@@ -84,6 +85,6 @@ public final class SingleMonadFactory implements MonadFactory {
 
     @Override
     public <T> Monad<T> of() {
-        return new NilMonad<>();
+        return NilMonad.get();
     }
 }

@@ -24,7 +24,7 @@ public interface MonadFactory {
      *
      * @return 一个单线程Monad工厂对象
      */
-    static MonadFactory createSingleMonadFactory() {
+    static SingleMonadFactory createSingleMonadFactory() {
         return new SingleMonadFactory();
     }
 

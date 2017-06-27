@@ -16,9 +16,32 @@ import java.util.function.Predicate;
  */
 public class PairNilMonad<K, V> implements PairMonad<K, V> {
 
+    /**
+     * 单例空PairMonad
+     */
+    private static final PairMonad<?, ?> EMPTY = new PairNilMonad<>();
+
+    /**
+     * 获取单例空PairMonad
+     *
+     * @param <K> 获取Monad的Key类型
+     * @param <V> 获取Monad的Value类型
+     * @return 一个空的PairMonad
+     */
+    @SuppressWarnings("unchecked")
+    static <K, V> PairMonad<K, V> get() {
+        return (PairMonad<K, V>) EMPTY;
+    }
+
+    /**
+     * 单例模式私有构造方法
+     */
+    private PairNilMonad() {
+    }
+
     @Override
     public <T> CommonMonad<T> mapToNormal(Function<? super Tuple<K, V>, ? extends T> mapFunc) {
-        return new NilMonad<>();
+        return NilMonad.get();
     }
 
     @Override

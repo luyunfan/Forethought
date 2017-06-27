@@ -17,6 +17,28 @@ import java.util.function.Predicate;
  */
 public class NilMonad<T> implements CommonMonad<T> {
 
+    /**
+     * 单例空CommonMonad
+     */
+    private static final NilMonad<?> EMPTY = new NilMonad<>();
+
+    /**
+     * 获取单例空Monad
+     *
+     * @param <T> 获取Monad的类型
+     * @return 一个空的Monad
+     */
+    @SuppressWarnings("unchecked")
+    static <T> NilMonad<T> get() {
+        return (NilMonad<T>) EMPTY;
+    }
+
+    /**
+     * 单例模式私有构造方法
+     */
+    private NilMonad() {
+    }
+
     @Override
     public Monad<T> filter(Predicate<? super T> predicate) {
         return this;
@@ -116,7 +138,7 @@ public class NilMonad<T> implements CommonMonad<T> {
 
     @Override
     public <K, V> PairMonad<K, V> mapToPair(Function<? super T, ? extends Tuple<K, V>> mapFunc) {
-        return new PairNilMonad<>();
+        return PairNilMonad.get();
     }
 
     @Override
