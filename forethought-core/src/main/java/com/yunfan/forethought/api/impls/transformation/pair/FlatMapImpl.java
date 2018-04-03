@@ -5,6 +5,7 @@ import com.yunfan.forethought.api.impls.PairMonadImpl;
 import com.yunfan.forethought.api.impls.transformation.Transformation;
 import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.enums.TransformationalType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -27,7 +28,7 @@ public class FlatMapImpl<IN, K, V> extends PairMonadImpl<K, V> implements Transf
      *
      * @param father 上层依赖对象
      */
-    public FlatMapImpl(Dependency<?> father, Function<? super IN, ? extends PairMonad<? extends K, ? extends V>> f) {
+    public FlatMapImpl(@NotNull Dependency<?> father, @NotNull Function<? super IN, ? extends PairMonad<? extends K, ? extends V>> f) {
         super(father);
         mapFunc = f;
     }

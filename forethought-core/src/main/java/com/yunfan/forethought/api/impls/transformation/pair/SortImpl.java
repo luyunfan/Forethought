@@ -1,33 +1,34 @@
-package com.yunfan.forethought.api.impls.transformation.common;
+package com.yunfan.forethought.api.impls.transformation.pair;
 
 import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.impls.CommonMonadImpl;
+import com.yunfan.forethought.api.impls.PairMonadImpl;
 import com.yunfan.forethought.api.impls.transformation.Transformation;
 import com.yunfan.forethought.enums.TransformationalType;
+import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
-import java.util.Optional;
 
 /**
  * 代表进行排序转换的Monad
  *
- * @param <T> Monad的元素类型
+ * @param <K> PairMonad Key元素类型
+ * @param <V> PairMonad Value元素类型
  */
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class SortImpl<T> extends CommonMonadImpl<T> implements Transformation {
+public class SortImpl<K, V> extends PairMonadImpl<K, V> implements Transformation {
 
     /**
      * 排序规则
      */
-    private Optional<Comparator<T>> sortRule;
+    private Comparator<Tuple<K, V>> sortRule;
 
     /**
      * 注入上层依赖的构造函数
      *
      * @param father 上层依赖对象
      */
-    private SortImpl(@NotNull Dependency<T> father) {
+    private SortImpl(@NotNull Dependency<Tuple<K, V>> father) {
         super(father);
     }
 
@@ -37,7 +38,7 @@ public class SortImpl<T> extends CommonMonadImpl<T> implements Transformation {
      * @param father     上层依赖对象
      * @param comparator 排序规则
      */
-    public SortImpl(@NotNull Dependency<T> father, @NotNull Optional<Comparator<T>> comparator) {
+    public SortImpl(@NotNull Dependency<Tuple<K, V>> father,@NotNull Comparator<Tuple<K, V>> comparator) {
         this(father);
         sortRule = comparator;
     }
@@ -47,7 +48,7 @@ public class SortImpl<T> extends CommonMonadImpl<T> implements Transformation {
      *
      * @return 排序规则
      */
-    public Optional<Comparator<T>> getSortRule() {
+    public Comparator<Tuple<K, V>> getSortRule() {
         return sortRule;
     }
 

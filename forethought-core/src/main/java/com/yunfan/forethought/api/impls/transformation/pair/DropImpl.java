@@ -1,7 +1,8 @@
-package com.yunfan.forethought.api.impls.transformation.common;
+package com.yunfan.forethought.api.impls.transformation.pair;
 
 import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.impls.CommonMonadImpl;
+import com.yunfan.forethought.api.impls.PairMonadImpl;
 import com.yunfan.forethought.api.impls.transformation.Transformation;
 import com.yunfan.forethought.enums.TransformationalType;
 import org.jetbrains.annotations.NotNull;
@@ -9,9 +10,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Drop的中间转换操作
  *
- * @param <T> Monad元素类型
+ * @param <K> PairMonad Key元素类型
+ * @param <V> PairMonad Value元素类型
  */
-public class DropImpl<T> extends CommonMonadImpl<T> implements Transformation {
+public class DropImpl<K, V> extends PairMonadImpl<K, V> implements Transformation {
 
     /**
      * drop操作删除的数量

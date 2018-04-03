@@ -4,6 +4,7 @@ import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.impls.CommonMonadImpl;
 import com.yunfan.forethought.api.impls.transformation.Transformation;
 import com.yunfan.forethought.enums.TransformationalType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
@@ -24,7 +25,7 @@ public class FilterImpl<T> extends CommonMonadImpl<T> implements Transformation 
      *
      * @param father 上层依赖对象
      */
-    private FilterImpl(Dependency<T> father) {
+    private FilterImpl(@NotNull Dependency<T> father) {
         super(father);
     }
 
@@ -34,7 +35,7 @@ public class FilterImpl<T> extends CommonMonadImpl<T> implements Transformation 
      * @param father 上层依赖对象
      * @param f      实际执行的filter函数内容
      */
-    public FilterImpl(Dependency<T> father, Predicate<? super T> f) {
+    public FilterImpl(@NotNull Dependency<T> father, @NotNull Predicate<? super T> f) {
         this(father);
         filterFunc = f;
     }

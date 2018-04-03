@@ -1,23 +1,25 @@
-package com.yunfan.forethought.api.impls.transformation.common;
+package com.yunfan.forethought.api.impls.transformation.pair;
 
 import com.yunfan.forethought.api.dependency.Dependency;
-import com.yunfan.forethought.api.impls.CommonMonadImpl;
+import com.yunfan.forethought.api.impls.PairMonadImpl;
 import com.yunfan.forethought.api.impls.transformation.Transformation;
-import com.yunfan.forethought.api.monad.CommonMonad;
+import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.enums.TransformationalType;
 import org.jetbrains.annotations.NotNull;
+
 
 /**
  * 代表进行转换的Union操作
  *
- * @param <T> Monad元素类型
+ * @param <K> PairMonad Key元素类型
+ * @param <V> PairMonad Value元素类型
  */
-public class UnionImpl<T> extends CommonMonadImpl<T> implements Transformation {
+public class UnionImpl<K, V> extends PairMonadImpl<K, V> implements Transformation {
 
     /**
      * 和本Monad进行Union的Monad对象
      */
-    private final CommonMonad<? extends T> other;
+    private final PairMonad<K, V> other;
 
 
     /**
@@ -25,7 +27,7 @@ public class UnionImpl<T> extends CommonMonadImpl<T> implements Transformation {
      *
      * @param father 上层依赖对象
      */
-    public UnionImpl(@NotNull Dependency<?> father, @NotNull CommonMonad<? extends T> other) {
+    public UnionImpl(@NotNull Dependency<?> father, @NotNull PairMonad<K, V> other) {
         super(father);
         this.other = other;
     }
@@ -33,7 +35,7 @@ public class UnionImpl<T> extends CommonMonadImpl<T> implements Transformation {
     /**
      * @return 和本Monad进行Union的Monad对象
      */
-    public CommonMonad<? extends T> other() {
+    public PairMonad<K, V> other() {
         return other;
     }
 

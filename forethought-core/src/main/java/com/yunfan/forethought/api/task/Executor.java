@@ -4,6 +4,7 @@ import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.enums.ExecutorType;
 import com.yunfan.forethought.exception.DependencyClassNotFoundException;
+import com.yunfan.forethought.model.Job;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public interface Executor {
      * @param dag 描述任务的DAG
      * @param <T> DAG中Monad的元素类型
      */
-    <T> void execute(Graph<Monad<T>> dag);
+    <T> Job execute(Graph<Monad<T>> dag);
 
     /**
      * 获取执行引擎的静态方法，执行引擎实现通过spi注入实现

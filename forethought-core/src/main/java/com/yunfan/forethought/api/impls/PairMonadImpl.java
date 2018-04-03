@@ -1,9 +1,7 @@
 package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
-import com.yunfan.forethought.api.impls.transformation.pair.FilterImpl;
-import com.yunfan.forethought.api.impls.transformation.pair.FlatMapImpl;
-import com.yunfan.forethought.api.impls.transformation.pair.MapImpl;
+import com.yunfan.forethought.api.impls.transformation.pair.*;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.iterators.RepeatableIterator;
@@ -174,7 +172,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<? extends K, ? extends V> union(@NotNull PairMonad<? extends K, ? extends V> other) {
-        return null;
+        return new UnionImpl<>(thisDept, other);
     }
 
     /**
@@ -271,7 +269,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> sortWith(@NotNull Comparator<Tuple<K, V>> comparator) {
-        return null;
+        return new SortImpl<>(thisDept, comparator);
     }
 
     /**
@@ -281,7 +279,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> drop() {
-        return null;
+        return new DropImpl<>(thisDept, 1, true);
     }
 
     /**
@@ -292,7 +290,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> drop(int dropNum) {
-        return null;
+        return new DropImpl<>(thisDept, dropNum, true);
     }
 
     /**
@@ -302,7 +300,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> dropRight() {
-        return null;
+        return new DropImpl<>(thisDept, 1, false);
     }
 
     /**
@@ -313,7 +311,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> dropRight(int dropNum) {
-        return null;
+        return new DropImpl<>(thisDept, dropNum, false);
     }
 
     /**
@@ -335,16 +333,6 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public Iterator<Tuple<K, V>> toIterator() {
         return null;
-    }
-
-    /**
-     * 遍历数据集合中的所有元素
-     *
-     * @param forFunc 遍历时执行的操作
-     */
-    @Override
-    public void foreach(@NotNull Consumer<? super Tuple<K, V>> forFunc) {
-
     }
 
     /**

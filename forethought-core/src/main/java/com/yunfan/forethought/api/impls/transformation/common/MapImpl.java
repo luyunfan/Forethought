@@ -4,6 +4,7 @@ import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.impls.CommonMonadImpl;
 import com.yunfan.forethought.api.impls.transformation.Transformation;
 import com.yunfan.forethought.enums.TransformationalType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -26,7 +27,7 @@ public class MapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transforma
      * @param father 上层依赖对象
      * @param f      实际执行的map函数内容
      */
-    public MapImpl(Dependency<IN> father, Function<? super IN, ? extends OUT> f) {
+    public MapImpl(@NotNull Dependency<IN> father, @NotNull Function<? super IN, ? extends OUT> f) {
         this(father);
         mapFunc = f;
     }
@@ -36,7 +37,7 @@ public class MapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transforma
      *
      * @param father 上层依赖对象
      */
-    private MapImpl(Dependency<IN> father) {
+    private MapImpl(@NotNull Dependency<IN> father) {
         super(father);
     }
 

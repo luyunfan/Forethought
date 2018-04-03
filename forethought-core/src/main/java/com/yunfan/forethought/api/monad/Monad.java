@@ -51,7 +51,7 @@ public interface Monad<T> {
      *
      * @return 包含集合中所有数据的List
      */
-    default List<T> toList(){
+    default List<T> toList() {
         List<T> result = new ArrayList<>();
         this.toIterator().forEachRemaining(result::add);
         return result;
@@ -62,7 +62,7 @@ public interface Monad<T> {
      *
      * @return 包含集合中所有数据的Set
      */
-    default Set<T> toSet(){
+    default Set<T> toSet() {
         Set<T> result = new HashSet<>();
         this.toIterator().forEachRemaining(result::add);
         return result;
@@ -80,7 +80,7 @@ public interface Monad<T> {
      *
      * @return 数据集合中元素数量
      */
-    default long count(){
+    default long count() {
         long[] result = {0};
         this.toIterator().forEachRemaining(item -> result[0]++);
         return result[0];
@@ -91,14 +91,16 @@ public interface Monad<T> {
      *
      * @param forFunc 遍历时执行的操作
      */
-    void foreach(@NotNull Consumer<? super T> forFunc);
+    default void foreach(@NotNull Consumer<? super T> forFunc) {
+        this.toIterator().forEachRemaining(forFunc);
+    }
 
     /**
      * 代表集合是否为空
      *
      * @return 集合是否为空
      */
-    default boolean isEmpty(){
+    default boolean isEmpty() {
         return this.toIterator().hasNext();
     }
 

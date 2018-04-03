@@ -5,6 +5,7 @@ import com.yunfan.forethought.api.impls.PairMonadImpl;
 import com.yunfan.forethought.api.impls.transformation.Transformation;
 import com.yunfan.forethought.enums.TransformationalType;
 import com.yunfan.forethought.type.Tuple;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
@@ -26,7 +27,7 @@ public class FilterImpl<K, V> extends PairMonadImpl<K, V> implements Transformat
      *
      * @param father 上层依赖对象
      */
-    private FilterImpl(Dependency<Tuple<K, V>> father) {
+    private FilterImpl(@NotNull Dependency<Tuple<K, V>> father) {
         super(father);
     }
 
@@ -36,7 +37,7 @@ public class FilterImpl<K, V> extends PairMonadImpl<K, V> implements Transformat
      * @param father 上层依赖对象
      * @param f      实际执行的filter函数内容
      */
-    public FilterImpl(Dependency<Tuple<K, V>> father, Predicate<? super Tuple<K, V>> f) {
+    public FilterImpl(@NotNull Dependency<Tuple<K, V>> father, @NotNull Predicate<? super Tuple<K, V>> f) {
         this(father);
         filterFunc = f;
     }

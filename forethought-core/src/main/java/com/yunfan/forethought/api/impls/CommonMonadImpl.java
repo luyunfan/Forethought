@@ -242,16 +242,6 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     }
 
     /**
-     * 遍历数据集合中的所有元素
-     *
-     * @param forFunc 遍历时执行的操作
-     */
-    @Override
-    public void foreach(@NotNull Consumer<? super T> forFunc) {
-        this.toIterator().forEachRemaining(forFunc);
-    }
-
-    /**
      * 代表该Monad是否是数据源Monad
      *
      * @return 是否是包含数据的第一个Monad

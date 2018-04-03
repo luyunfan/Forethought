@@ -1,5 +1,6 @@
 package com.yunfan.forethought.model;
 
+
 /**
  * 代表一个触发了Monad计算的任务
  */
