@@ -3,9 +3,7 @@ package com.yunfan.forethought.api.monad;
 import com.yunfan.forethought.enums.MonadType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -53,14 +51,22 @@ public interface Monad<T> {
      *
      * @return 包含集合中所有数据的List
      */
-    List<T> toList();
+    default List<T> toList(){
+        List<T> result = new ArrayList<>();
+        this.toIterator().forEachRemaining(result::add);
+        return result;
+    }
 
     /**
      * 将集合中所有元素添加到Set中，返回Set
      *
      * @return 包含集合中所有数据的Set
      */
-    Set<T> toSet();
+    default Set<T> toSet(){
+        Set<T> result = new HashSet<>();
+        this.toIterator().forEachRemaining(result::add);
+        return result;
+    }
 
     /**
      * 将集合中所有元素转化为迭代器
@@ -74,7 +80,11 @@ public interface Monad<T> {
      *
      * @return 数据集合中元素数量
      */
-    long count();
+    default long count(){
+        long[] result = {0};
+        this.toIterator().forEachRemaining(item -> result[0]++);
+        return result[0];
+    }
 
     /**
      * 遍历数据集合中的所有元素
@@ -88,7 +98,9 @@ public interface Monad<T> {
      *
      * @return 集合是否为空
      */
-    boolean isEmpty();
+    default boolean isEmpty(){
+        return this.toIterator().hasNext();
+    }
 
     /**
      * 代表该Monad是否是数据源Monad

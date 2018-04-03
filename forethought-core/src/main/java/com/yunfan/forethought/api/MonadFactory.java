@@ -65,7 +65,7 @@ public class MonadFactory {
      * @param <T>        集合中元素的数据类型
      * @return 包含集合内容的Monad
      */
-    public <T> Monad<T> from(@NotNull Collection<T> collection) {
+    public <T> CommonMonad<T> from(@NotNull Collection<T> collection) {
         MemoryRepeatableIterator<T> iterator = new MemoryRepeatableIterator<>(collection.iterator(), true);
         return new CommonMonadImpl<>(iterator);
     }
@@ -77,7 +77,7 @@ public class MonadFactory {
      * @param <T>   数组中元素的数据类型
      * @return 包含数组内容的Monad
      */
-    public <T> Monad<T> from(@NotNull T[] array) {
+    public <T> CommonMonad<T> from(@NotNull T[] array) {
         MemoryRepeatableIterator<T> iterator = new MemoryRepeatableIterator<>(Arrays.asList(array).iterator(), true);
         return new CommonMonadImpl<>(iterator);
 
@@ -90,7 +90,7 @@ public class MonadFactory {
      * @param <T>    Stream中对象的数据类型
      * @return 包含Stream中所有内容的Monad
      */
-    public <T> Monad<T> from(@NotNull Stream<T> stream) {
+    public <T> CommonMonad<T> from(@NotNull Stream<T> stream) {
         MemoryRepeatableIterator<T> iterator = new MemoryRepeatableIterator<>(stream.iterator(), true);
         return new CommonMonadImpl<>(iterator);
     }
@@ -102,7 +102,7 @@ public class MonadFactory {
      * @param <T>      迭代器中对象的数据类型
      * @return 包含迭代器中所有内容的Monad
      */
-    public <T> Monad<T> from(@NotNull Iterator<T> iterator) {
+    public <T> CommonMonad<T> from(@NotNull Iterator<T> iterator) {
         MemoryRepeatableIterator<T> i = new MemoryRepeatableIterator<>(iterator, true);
         return new CommonMonadImpl<>(i);
     }
@@ -115,7 +115,7 @@ public class MonadFactory {
      * @param <T>      产生的元素类型
      * @return 包含文件中所有内容的Monad
      */
-    public <T> Monad<T> fromFile(@NotNull String fileName, @NotNull Function<InputStream, T> creator) throws FileNotFoundException {
+    public <T> CommonMonad<T> fromFile(@NotNull String fileName, @NotNull Function<InputStream, T> creator) throws FileNotFoundException {
         FileRepeatableIterator<T> i = new FileRepeatableIterator<>(fileName, creator, true);
         return new CommonMonadImpl<>(i);
     }
@@ -126,7 +126,7 @@ public class MonadFactory {
      * @param fileName 文本路径
      * @return 包含所有文本字符串的Monad
      */
-    public Monad<String> fromText(@NotNull String fileName) throws FileNotFoundException {
+    public CommonMonad<String> fromText(@NotNull String fileName) throws FileNotFoundException {
         return fromText(fileName, System.getProperty("line.separator"), Charset.forName("UTF-8"));
     }
 
@@ -137,7 +137,7 @@ public class MonadFactory {
      * @param split    分隔符
      * @return 包含所有文本字符串的Monad
      */
-    public Monad<String> fromText(@NotNull String fileName, @NotNull String split, Charset charset) throws FileNotFoundException {
+    public CommonMonad<String> fromText(@NotNull String fileName, @NotNull String split, Charset charset) throws FileNotFoundException {
         Scanner scanner = new Scanner(new FileInputStream(fileName), charset.name()).useDelimiter(split);
         Function<InputStream, String> creator = source -> {
             try {
@@ -160,7 +160,7 @@ public class MonadFactory {
      * @return 包含所有数据的PairMonad
      */
     public <K, V> PairMonad<K, V> fromPairFile(@NotNull String fileName, @NotNull Function<InputStream, Tuple<K, V>> creator) throws FileNotFoundException {
-        FileRepeatableIterator<Tuple<K,V>> i = new FileRepeatableIterator<>(fileName, creator, true);
+        FileRepeatableIterator<Tuple<K, V>> i = new FileRepeatableIterator<>(fileName, creator, true);
         return new PairMonadImpl<>(i);
     }
 
@@ -175,21 +175,6 @@ public class MonadFactory {
     public <K, V> PairMonad<K, V> from(@NotNull Map<K, V> map) {
         MemoryRepeatableIterator<Tuple<K, V>> i = new MemoryRepeatableIterator<>(mapToList(map).iterator(), true);
         return new PairMonadImpl<>(i);
-    }
-
-    /**
-     * 将Map转换为装有Tuple的List
-     *
-     * @param map Map对象
-     * @param <K> Map中的Key类型
-     * @param <V> Map中的Value类型
-     * @return 装有Tuple的List对象
-     */
-    private <K, V> List<Tuple<K, V>> mapToList(@NotNull Map<K, V> map) {
-        return map.entrySet()
-                .parallelStream()
-                .map(entry -> new Tuple<>(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
     }
 
     /**
@@ -223,7 +208,7 @@ public class MonadFactory {
      * @return 包含这些值的Monad
      */
     @SuppressWarnings("unchecked")
-    public <T> Monad<T> of(@NotNull T... value) {
+    public <T> CommonMonad<T> of(@NotNull T... value) {
         return this.from(value);
     }
 
@@ -233,7 +218,22 @@ public class MonadFactory {
      *
      * @return 一个空Monad
      */
-    public <T> Monad<T> of() {
+    public <T> CommonMonad<T> of() {
         return CommonNilMonadImpl.get();
+    }
+
+    /**
+     * 将Map转换为装有Tuple的List
+     *
+     * @param map Map对象
+     * @param <K> Map中的Key类型
+     * @param <V> Map中的Value类型
+     * @return 装有Tuple的List对象
+     */
+    private <K, V> List<Tuple<K, V>> mapToList(@NotNull Map<K, V> map) {
+        return map.entrySet()
+                .parallelStream()
+                .map(entry -> new Tuple<>(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 }

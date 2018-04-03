@@ -30,7 +30,7 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 一个空的PairMonad
      */
     @SuppressWarnings("unchecked")
-    static <K, V> PairMonad<K, V> get() {
+    public static <K, V> PairMonad<K, V> get() {
         return (PairMonad<K, V>) EMPTY;
     }
 

@@ -80,7 +80,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public <K, V> PairMonad<K, V> mapToPair(@NotNull Function<? super T, ? extends Tuple<K, V>> mapFunc) {
-        return new com.yunfan.forethought.api.impls.transformation.pair.MapImpl<>(thisDept,mapFunc);
+        return new com.yunfan.forethought.api.impls.transformation.pair.MapImpl<>(thisDept, mapFunc);
     }
 
     /**
@@ -230,29 +230,6 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
         return null;
     }
 
-    /**
-     * 将集合中所有元素添加到List中，返回List
-     *
-     * @return 包含集合中所有数据的List
-     */
-    @Override
-    public List<T> toList() {
-        List<T> result = new ArrayList<>();
-        this.toIterator().forEachRemaining(result::add);
-        return result;
-    }
-
-    /**
-     * 将集合中所有元素添加到Set中，返回Set
-     *
-     * @return 包含集合中所有数据的Set
-     */
-    @Override
-    public Set<T> toSet() {
-        Set<T> result = new HashSet<>();
-        this.toIterator().forEachRemaining(result::add);
-        return result;
-    }
 
     /**
      * 将集合中所有元素转化为迭代器
@@ -265,18 +242,6 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     }
 
     /**
-     * 返回本数据集合中元素数量的方法
-     *
-     * @return 数据集合中元素数量
-     */
-    @Override
-    public long count() {
-        long[] result = {0};
-        this.toIterator().forEachRemaining(item -> result[0]++);
-        return result[0];
-    }
-
-    /**
      * 遍历数据集合中的所有元素
      *
      * @param forFunc 遍历时执行的操作
@@ -284,16 +249,6 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     @Override
     public void foreach(@NotNull Consumer<? super T> forFunc) {
         this.toIterator().forEachRemaining(forFunc);
-    }
-
-    /**
-     * 代表集合是否为空
-     *
-     * @return 集合是否为空
-     */
-    @Override
-    public boolean isEmpty() {
-        return this.toIterator().hasNext();
     }
 
     /**
@@ -370,22 +325,12 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     }
 
     /**
-     * 获取一个空Monad
-     *
-     * @return 一个空的Monad
-     */
-    @Override
-    public CommonMonad<T> empty() {
-        return CommonNilMonadImpl.get();
-    }
-
-    /**
      * 获取中间转换的函数
      *
      * @return 中间转换操作函数对象
      */
     protected Object getTransformationalFunction() {
-        return null;
+        throw new UnsupportedOperationException("本对象不是Transformation对象！不能调用getTransformationalFunction()方法！");
     }
 
     /**

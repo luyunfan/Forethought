@@ -1,10 +1,10 @@
 package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
+import com.yunfan.forethought.api.impls.transformation.pair.FilterImpl;
 import com.yunfan.forethought.api.impls.transformation.pair.FlatMapImpl;
 import com.yunfan.forethought.api.impls.transformation.pair.MapImpl;
 import com.yunfan.forethought.api.monad.CommonMonad;
-import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.iterators.RepeatableIterator;
 import com.yunfan.forethought.type.Tuple;
@@ -204,7 +204,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> filter(@NotNull Predicate<? super Tuple<K, V>> predicate) {
-        return null;
+        return new FilterImpl<>(thisDept, predicate);
     }
 
     /**
@@ -280,7 +280,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一个元素后的元素集合
      */
     @Override
-    public PairMonad<K,V> drop() {
+    public PairMonad<K, V> drop() {
         return null;
     }
 
@@ -291,7 +291,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public PairMonad<K,V> drop(int dropNum) {
+    public PairMonad<K, V> drop(int dropNum) {
         return null;
     }
 
@@ -301,7 +301,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一个元素后的元素集合
      */
     @Override
-    public PairMonad<K,V> dropRight() {
+    public PairMonad<K, V> dropRight() {
         return null;
     }
 
@@ -312,7 +312,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public PairMonad<K,V> dropRight(int dropNum) {
+    public PairMonad<K, V> dropRight(int dropNum) {
         return null;
     }
 
@@ -328,26 +328,6 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     }
 
     /**
-     * 将集合中所有元素添加到List中，返回List
-     *
-     * @return 包含集合中所有数据的List
-     */
-    @Override
-    public List<Tuple<K, V>> toList() {
-        return null;
-    }
-
-    /**
-     * 将集合中所有元素添加到Set中，返回Set
-     *
-     * @return 包含集合中所有数据的Set
-     */
-    @Override
-    public Set<Tuple<K, V>> toSet() {
-        return null;
-    }
-
-    /**
      * 将集合中所有元素转化为迭代器
      *
      * @return 一个 Iterator对象
@@ -358,16 +338,6 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     }
 
     /**
-     * 返回本数据集合中元素数量的方法
-     *
-     * @return 数据集合中元素数量
-     */
-    @Override
-    public long count() {
-        return 0;
-    }
-
-    /**
      * 遍历数据集合中的所有元素
      *
      * @param forFunc 遍历时执行的操作
@@ -375,16 +345,6 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public void foreach(@NotNull Consumer<? super Tuple<K, V>> forFunc) {
 
-    }
-
-    /**
-     * 代表集合是否为空
-     *
-     * @return 集合是否为空
-     */
-    @Override
-    public boolean isEmpty() {
-        return this.toIterator().hasNext();
     }
 
     /**
@@ -403,6 +363,6 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 中间转换操作函数对象
      */
     protected Object getTransformationalFunction() {
-        return null;
+        throw new UnsupportedOperationException("本对象不是Transformation对象！不能调用getTransformationalFunction()方法！");
     }
 }

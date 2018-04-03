@@ -1,5 +1,6 @@
 package com.yunfan.forethought.api.monad;
 
+import com.yunfan.forethought.api.impls.PairNilMonadImpl;
 import com.yunfan.forethought.enums.MonadType;
 import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +121,7 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      *
      * @return 取出一个元素后的元素集合
      */
-    PairMonad<K,V> drop();
+    PairMonad<K, V> drop();
 
     /**
      * 从集合起始端取出一些元素组成集合
@@ -128,14 +129,14 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    PairMonad<K,V> drop(int dropNum);
+    PairMonad<K, V> drop(int dropNum);
 
     /**
      * 从集合末端取出一个元素组成集合
      *
      * @return 取出一个元素后的元素集合
      */
-    PairMonad<K,V> dropRight();
+    PairMonad<K, V> dropRight();
 
     /**
      * 从集合末端取出一些元素组成集合
@@ -143,7 +144,7 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    PairMonad<K,V> dropRight(int dropNum);
+    PairMonad<K, V> dropRight(int dropNum);
 
     /**
      * 对其它Key相同的PairMonad执行内连接操作，得到连接后的PairMonad对象
@@ -191,7 +192,12 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
         return MonadType.PAIR;
     }
 
-//    default PairMonad<K,V> empty(){
-//        return
-//    }
+    /**
+     * 获取一个空Monad
+     *
+     * @return 一个空的Monad
+     */
+    default PairMonad<K, V> empty() {
+        return PairNilMonadImpl.get();
+    }
 }
