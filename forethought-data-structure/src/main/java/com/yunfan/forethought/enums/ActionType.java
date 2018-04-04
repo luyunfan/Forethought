@@ -1,7 +1,12 @@
 package com.yunfan.forethought.enums;
 
 /**
- * 代表最终触发执行的Action操作类型
+ * Action操作本身的类型枚举ß
  */
 public enum ActionType {
+
+    /**
+     * 布尔断类型
+     */
+    PREDICATE
 }

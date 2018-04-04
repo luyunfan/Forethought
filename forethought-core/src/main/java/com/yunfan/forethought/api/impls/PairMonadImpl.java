@@ -1,17 +1,23 @@
 package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
+import com.yunfan.forethought.api.impls.action.Action;
+import com.yunfan.forethought.api.impls.action.PredicateImpl;
 import com.yunfan.forethought.api.impls.transformation.pair.*;
 import com.yunfan.forethought.api.monad.CommonMonad;
+import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
+import com.yunfan.forethought.api.task.JobSubmitter;
+import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.iterators.RepeatableIterator;
 import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -86,17 +92,6 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> sortByKey() {
-        return null;
-    }
-
-    /**
-     * 根据用户传入特定函数选择排序依据
-     *
-     * @param sortFunc 确定排序依据的函数，输入为当前元素，输出为依据
-     * @return 排好序的PairMonad
-     */
-    @Override
-    public <T> PairMonad<K, V> sortBy(@NotNull Function<? super Tuple<K, V>, ? extends T> sortFunc) {
         return null;
     }
 
@@ -213,7 +208,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public boolean all(@NotNull Predicate<? super Tuple<K, V>> predicate) {
-        return false;
+        PredicateImpl<Tuple<K, V>> action = new PredicateImpl<>(predicate, false);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
     }
 
     /**
@@ -224,7 +220,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public boolean any(@NotNull Predicate<? super Tuple<K, V>> predicate) {
-        return false;
+        PredicateImpl<Tuple<K, V>> action = new PredicateImpl<>(predicate, true);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
     }
 
     /**
@@ -352,5 +349,17 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     protected Object getTransformationalFunction() {
         throw new UnsupportedOperationException("本对象不是Transformation对象！不能调用getTransformationalFunction()方法！");
+    }
+
+    /**
+     * 生成DAG
+     *
+     * @param finalMonad 最终的Monad对象
+     * @return 根据Monad依赖生成的DAG
+     */
+    protected Graph<Monad<Tuple<K, V>>> createDAG(Monad<Tuple<K, V>> finalMonad) {
+        Graph<Monad<Tuple<K, V>>> result = new Graph<>();
+        //TODO 待实现
+        return result;
     }
 }

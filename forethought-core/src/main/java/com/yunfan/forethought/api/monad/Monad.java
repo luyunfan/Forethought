@@ -115,4 +115,5 @@ public interface Monad<T> {
      * @return 当前Monad的类型
      */
     MonadType monadType();
+
 }

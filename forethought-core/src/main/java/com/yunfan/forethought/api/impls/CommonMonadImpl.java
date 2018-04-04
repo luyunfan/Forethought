@@ -2,10 +2,12 @@ package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.impls.action.Action;
+import com.yunfan.forethought.api.impls.action.PredicateImpl;
 import com.yunfan.forethought.api.impls.transformation.common.*;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
+import com.yunfan.forethought.api.task.JobSubmitter;
 import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.iterators.RepeatableIterator;
 import com.yunfan.forethought.type.Tuple;
@@ -120,7 +122,8 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public boolean all(@NotNull Predicate<? super T> predicate) {
-        return false;
+        PredicateImpl<T> action = new PredicateImpl<>(predicate, false);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
     }
 
     /**
@@ -131,7 +134,8 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public boolean any(@NotNull Predicate<? super T> predicate) {
-        return false;
+        PredicateImpl<T> action = new PredicateImpl<>(predicate, true);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
     }
 
     /**
@@ -330,9 +334,6 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 根据Monad依赖生成的DAG
      */
     protected Graph<Monad<T>> createDAG(Monad<T> finalMonad) {
-        if (!(finalMonad instanceof Action)) {
-            throw new IllegalStateException("创建有向无环图时，最终计算操作Monad：" + finalMonad + "不是Action操作！");
-        }
         Graph<Monad<T>> result = new Graph<>();
         //TODO 待实现
         return result;

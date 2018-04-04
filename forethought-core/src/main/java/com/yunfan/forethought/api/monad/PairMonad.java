@@ -41,15 +41,6 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
     PairMonad<K, V> sortByKey();
 
     /**
-     * 根据用户传入特定函数选择排序依据
-     *
-     * @param sortFunc 确定排序依据的函数，输入为当前元素，输出为依据
-     * @param <T>      依据的类型
-     * @return 排好序的PairMonad
-     */
-    <T> PairMonad<K, V> sortBy(@NotNull Function<? super Tuple<K, V>, ? extends T> sortFunc);
-
-    /**
      * 计算同一Key的元素数量，得到(Key,Number)键值对集合
      *
      * @return 一个包含(键, 数量)的Map对象

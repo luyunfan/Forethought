@@ -55,11 +55,6 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
         return this;
     }
 
-    @Override
-    public <T> PairMonad<K, V> sortBy(@NotNull Function<? super Tuple<K, V>, ? extends T> sortFunc) {
-        return this;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public PairMonad<K, Long> countByKey() {
