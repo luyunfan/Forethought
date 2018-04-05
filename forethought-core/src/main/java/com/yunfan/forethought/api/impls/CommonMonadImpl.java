@@ -1,8 +1,9 @@
 package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
-import com.yunfan.forethought.api.impls.action.Action;
+import com.yunfan.forethought.api.impls.action.CollectImpl;
 import com.yunfan.forethought.api.impls.action.PredicateImpl;
+import com.yunfan.forethought.api.impls.action.ReduceImpl;
 import com.yunfan.forethought.api.impls.transformation.common.*;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
@@ -14,9 +15,10 @@ import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -92,15 +94,19 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public T first() {
-//        if (firstElement != null) //返回缓存数据
-//            return firstElement;
-//        else if (fatherDependency == null && dataSource != null) //如果本Monad就是数据源，则返回迭代器的首个元素
-//            return dataSource.firstElement();
-//        else if (fatherDependency != null && dataSource == null) //如果不是数据源则递归寻找上一个依赖 TODO 依赖层数太多可能爆栈，后期需要优化
-//            return fatherDependency.get().first();
-//        else //肯定逻辑出错了
-//            throw new IllegalArgumentException("调用Monad.first()出现内部错误！Monad既不是数据源也没有上层依赖！");
-        return null;
+        return getFirst();
+    }
+
+    /**
+     * 获取第一个元素，如果是第一次调用则触发计算出第一个元素，否则就返回缓存值
+     *
+     * @return 第一个元素
+     */
+    private T getFirst() {
+        if (firstElement == null) {
+            firstElement = toIterator().next();
+        }
+        return firstElement;
     }
 
     /**
@@ -231,7 +237,8 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public T reduce(@NotNull BiFunction<T, T, T> reduceFunc) {
-        return null;
+        ReduceImpl<T> action = new ReduceImpl<>(reduceFunc);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
     }
 
 
@@ -242,7 +249,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public Iterator<T> toIterator() {
-        return null;
+        return JobSubmitter.INSTANCE.submitTask(createDAG(this), new CollectImpl<>());
     }
 
     /**
@@ -253,6 +260,14 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     @Override
     public boolean isDataSource() {
         return dataSource != null;
+    }
+
+    /**
+     * @return 返回本Monad的上层依赖
+     */
+    @Override
+    public Optional<Dependency<?>> getFatherDependency() {
+        return fatherDependency == null ? Optional.empty() : Optional.of(fatherDependency);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.yunfan.forethought.api.impls.action;
 
 import com.yunfan.forethought.enums.ActionType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
@@ -27,7 +28,7 @@ public class PredicateImpl<R> implements Action<Boolean, Predicate<? super R>> {
      * @param predicateFunc 自定义函数
      * @param isAny         任意一个通过检查就返回true
      */
-    public PredicateImpl(Predicate<? super R> predicateFunc, boolean isAny) {
+    public PredicateImpl(@NotNull Predicate<? super R> predicateFunc, boolean isAny) {
         this.predicateFunc = predicateFunc;
         this.isAny = isAny;
     }

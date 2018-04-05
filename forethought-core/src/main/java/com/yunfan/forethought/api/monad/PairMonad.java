@@ -26,6 +26,20 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
     <T> CommonMonad<T> mapToNormal(@NotNull Function<? super Tuple<K, V>, ? extends T> mapFunc);
 
     /**
+     * @return 当前PairMonad的所有Key组成的Monad
+     */
+    default CommonMonad<K> keys() {
+        return this.mapToNormal(Tuple::key);
+    }
+
+    /**
+     * @return 当前PairMonad的所有Value组成的Monad
+     */
+    default CommonMonad<V> values() {
+        return this.mapToNormal(Tuple::value);
+    }
+
+    /**
      * 对同一Key的元素进行reduce归并操作，得到归并后的PairMonad
      *
      * @param reduceFunc 进行归并的函数，输入参数为两两归并的两个参数，返回同类型归并后的结果

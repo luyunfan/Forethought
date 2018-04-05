@@ -1,5 +1,6 @@
 package com.yunfan.forethought.api.monad;
 
+import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.enums.MonadType;
 import org.jetbrains.annotations.NotNull;
 
@@ -115,5 +116,10 @@ public interface Monad<T> {
      * @return 当前Monad的类型
      */
     MonadType monadType();
+
+    /**
+     * @return 返回本Monad的上层依赖
+     */
+    Optional<Dependency<?>> getFatherDependency();
 
 }

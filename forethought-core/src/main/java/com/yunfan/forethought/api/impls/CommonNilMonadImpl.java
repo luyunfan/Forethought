@@ -1,5 +1,6 @@
 package com.yunfan.forethought.api.impls;
 
+import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
@@ -145,6 +146,14 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
     @Override
     public boolean isDataSource() {
         return true;
+    }
+
+    /**
+     * @return 返回本Monad的上层依赖
+     */
+    @Override
+    public Optional<Dependency<?>> getFatherDependency() {
+        return Optional.empty();
     }
 
     @Override

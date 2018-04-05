@@ -2,7 +2,9 @@ package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.impls.action.Action;
+import com.yunfan.forethought.api.impls.action.CollectImpl;
 import com.yunfan.forethought.api.impls.action.PredicateImpl;
+import com.yunfan.forethought.api.impls.action.ReduceImpl;
 import com.yunfan.forethought.api.impls.transformation.pair.*;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
@@ -17,6 +19,7 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -42,6 +45,11 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * 数据源
      */
     private RepeatableIterator<Tuple<K, V>> dataSource;
+
+    /**
+     * 代表首个元素的缓存
+     */
+    private Tuple<K, V> firstElement = null;
 
     /**
      * 注入上层依赖的构造函数
@@ -113,7 +121,19 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public Tuple<K, V> first() {
-        return null;
+        return getFirst();
+    }
+
+    /**
+     * 获取第一个元素，如果是第一次调用则触发计算出第一个元素，否则就返回缓存值
+     *
+     * @return 第一个元素
+     */
+    private Tuple<K, V> getFirst() {
+        if (firstElement == null) {
+            firstElement = toIterator().next();
+        }
+        return firstElement;
     }
 
     /**
@@ -319,7 +339,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public Tuple<K, V> reduce(@NotNull BiFunction<Tuple<K, V>, Tuple<K, V>, Tuple<K, V>> reduceFunc) {
-        return null;
+        ReduceImpl<Tuple<K, V>> action = new ReduceImpl<>(reduceFunc);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
     }
 
     /**
@@ -329,7 +350,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public Iterator<Tuple<K, V>> toIterator() {
-        return null;
+        CollectImpl<Tuple<K, V>> action = new CollectImpl<>();
+        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
     }
 
     /**
@@ -340,6 +362,14 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public boolean isDataSource() {
         return dataSource != null;
+    }
+
+    /**
+     * @return 返回本Monad的上层依赖
+     */
+    @Override
+    public Optional<Dependency<?>> getFatherDependency() {
+        return fatherDependency == null ? Optional.empty() : Optional.of(fatherDependency);
     }
 
     /**

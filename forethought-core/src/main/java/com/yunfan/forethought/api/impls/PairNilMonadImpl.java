@@ -1,5 +1,6 @@
 package com.yunfan.forethought.api.impls;
 
+import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
@@ -212,5 +213,13 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public boolean isDataSource() {
         return true;
+    }
+
+    /**
+     * @return 返回本Monad的上层依赖
+     */
+    @Override
+    public Optional<Dependency<?>> getFatherDependency() {
+        return Optional.empty();
     }
 }
