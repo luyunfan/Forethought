@@ -140,7 +140,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> take(int takeNum) {
-        return null;
+        int[] temp = {takeNum};
+        return new TakeImpl<>(thisDept, item -> temp[0]-- == 0);
     }
 
     /**
@@ -151,7 +152,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> takeWhile(@NotNull Predicate<Tuple<K, V>> func) {
-        return null;
+        return new TakeImpl<>(thisDept, func);
     }
 
     /**
@@ -200,7 +201,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
         long length = count();
         if (length != (int) length)
             throw new UnsupportedOperationException("toArray()调用必须保证Monad元素数量在32位整数范围之内！数组不能容纳更多的元素");
-        Tuple<K, V>[] result = (Tuple[]) Array.newInstance(Tuple.class, (int) count());
+        Tuple<K, V>[] result = (Tuple[]) Array.newInstance(Tuple.class, (int) length);
         Iterator<Tuple<K, V>> iterator = toIterator();
         for (int index = 0; index < length; index++) {
             result[index] = iterator.next();

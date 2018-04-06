@@ -274,11 +274,12 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * 取出集合一些元素组成List返回
      *
      * @param takeNum 取出的元素数量
-     * @return 取出的元素组成的List对象
+     * @return 取出的元素组成的CommonMonad对象
      */
     @Override
     public CommonMonad<T> take(int takeNum) {
-        return null;
+        int[] temp = {takeNum};
+        return new TakeImpl<>(thisDept, item -> temp[0]-- == 0);
     }
 
     /**
@@ -289,7 +290,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public CommonMonad<T> takeWhile(@NotNull Predicate<T> func) {
-        return null;
+        return new TakeImpl<>(thisDept, func);
     }
 
     /**
