@@ -20,16 +20,7 @@ public class FilterImpl<K, V> extends PairMonadImpl<K, V> implements Transformat
     /**
      * 实际filter执行的函数
      */
-    private Predicate<? super Tuple<K, V>> filterFunc;
-
-    /**
-     * 注入上层依赖的构造函数
-     *
-     * @param father 上层依赖对象
-     */
-    private FilterImpl(@NotNull Dependency<Tuple<K, V>> father) {
-        super(father);
-    }
+    private final Predicate<? super Tuple<K, V>> filterFunc;
 
     /**
      * 注入上层依赖的构造函数
@@ -38,7 +29,7 @@ public class FilterImpl<K, V> extends PairMonadImpl<K, V> implements Transformat
      * @param f      实际执行的filter函数内容
      */
     public FilterImpl(@NotNull Dependency<Tuple<K, V>> father, @NotNull Predicate<? super Tuple<K, V>> f) {
-        this(father);
+        super(father);
         filterFunc = f;
     }
 

@@ -19,7 +19,7 @@ public class MapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transforma
     /**
      * 实际map执行的函数
      */
-    private Function<? super IN, ? extends OUT> mapFunc;
+    private final Function<? super IN, ? extends OUT> mapFunc;
 
     /**
      * 注入上层依赖的构造函数
@@ -28,17 +28,8 @@ public class MapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transforma
      * @param f      实际执行的map函数内容
      */
     public MapImpl(@NotNull Dependency<IN> father, @NotNull Function<? super IN, ? extends OUT> f) {
-        this(father);
-        mapFunc = f;
-    }
-
-    /**
-     * 注入上层依赖的构造函数
-     *
-     * @param father 上层依赖对象
-     */
-    private MapImpl(@NotNull Dependency<IN> father) {
         super(father);
+        mapFunc = f;
     }
 
     /**

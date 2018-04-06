@@ -33,5 +33,10 @@ public enum TransformationalType {
     /**
      * 合并Monad操作
      */
-    UNION
+    UNION,
+
+    /**
+     * Pair的Shuffle操作
+     */
+    SHUFFLE
 }

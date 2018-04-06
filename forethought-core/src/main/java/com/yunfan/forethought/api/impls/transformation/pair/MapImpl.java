@@ -21,7 +21,7 @@ public class MapImpl<IN, K2, V2> extends PairMonadImpl<K2, V2> implements Transf
     /**
      * 实际map执行的函数
      */
-    private Function<? super IN, ? extends Tuple<K2, V2>> mapFunc;
+    private final Function<? super IN, ? extends Tuple<K2, V2>> mapFunc;
 
     /**
      * 注入上层依赖的构造函数
@@ -30,17 +30,8 @@ public class MapImpl<IN, K2, V2> extends PairMonadImpl<K2, V2> implements Transf
      * @param f      实际执行的map函数内容
      */
     public MapImpl(@NotNull Dependency<IN> father, @NotNull Function<? super IN, ? extends Tuple<K2, V2>> f) {
-        this(father);
-        mapFunc = f;
-    }
-
-    /**
-     * 注入上层依赖的构造函数
-     *
-     * @param father 上层依赖对象
-     */
-    private MapImpl(@NotNull Dependency<IN> father) {
         super(father);
+        mapFunc = f;
     }
 
     /**

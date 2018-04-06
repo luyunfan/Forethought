@@ -18,16 +18,7 @@ public class FilterImpl<T> extends CommonMonadImpl<T> implements Transformation 
     /**
      * 实际filter执行的函数
      */
-    private Predicate<? super T> filterFunc;
-
-    /**
-     * 注入上层依赖的构造函数
-     *
-     * @param father 上层依赖对象
-     */
-    private FilterImpl(@NotNull Dependency<T> father) {
-        super(father);
-    }
+    private final Predicate<? super T> filterFunc;
 
     /**
      * 注入上层依赖的构造函数
@@ -36,7 +27,7 @@ public class FilterImpl<T> extends CommonMonadImpl<T> implements Transformation 
      * @param f      实际执行的filter函数内容
      */
     public FilterImpl(@NotNull Dependency<T> father, @NotNull Predicate<? super T> f) {
-        this(father);
+        super(father);
         filterFunc = f;
     }
 

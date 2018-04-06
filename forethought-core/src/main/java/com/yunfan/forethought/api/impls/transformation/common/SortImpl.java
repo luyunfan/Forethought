@@ -20,16 +20,7 @@ public class SortImpl<T> extends CommonMonadImpl<T> implements Transformation {
     /**
      * 排序规则
      */
-    private Optional<Comparator<T>> sortRule;
-
-    /**
-     * 注入上层依赖的构造函数
-     *
-     * @param father 上层依赖对象
-     */
-    private SortImpl(@NotNull Dependency<T> father) {
-        super(father);
-    }
+    private final Optional<Comparator<T>> sortRule;
 
     /**
      * 注入上层依赖的构造函数
@@ -38,7 +29,7 @@ public class SortImpl<T> extends CommonMonadImpl<T> implements Transformation {
      * @param comparator 排序规则
      */
     public SortImpl(@NotNull Dependency<T> father, @NotNull Optional<Comparator<T>> comparator) {
-        this(father);
+        super(father);
         sortRule = comparator;
     }
 

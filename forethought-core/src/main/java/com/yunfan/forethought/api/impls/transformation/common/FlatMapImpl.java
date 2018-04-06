@@ -20,7 +20,7 @@ public class FlatMapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transf
     /**
      * 中间转换的函数
      */
-    private Function<? super IN, ? extends Monad<? extends OUT>> mapFunc;
+    private final Function<? super IN, ? extends Monad<? extends OUT>> mapFunc;
 
     /**
      * 注入上层依赖的构造函数

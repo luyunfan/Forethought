@@ -1,7 +1,6 @@
 package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
-import com.yunfan.forethought.api.impls.action.Action;
 import com.yunfan.forethought.api.impls.action.CollectImpl;
 import com.yunfan.forethought.api.impls.action.PredicateImpl;
 import com.yunfan.forethought.api.impls.action.ReduceImpl;
@@ -16,10 +15,7 @@ import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -90,17 +86,17 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, V> reduceByKey(@NotNull BiFunction<V, V, V> reduceFunc) {
-        return null;
+        return new AggregateShuffleImpl<>(thisDept, reduceFunc);
     }
 
     /**
-     * 根据Key进行排序
+     * 根据Key进行排序（Key类型必须是实现Comparable的）
      *
      * @return 根据Key排好序的集合
      */
     @Override
     public PairMonad<K, V> sortByKey() {
-        return null;
+        return new SortedShuffleImpl<>(thisDept);
     }
 
     /**
@@ -176,7 +172,10 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public PairMonad<K, Collection<V>> groupByKey() {
-        return null;
+        return new CombineShuffleImpl<>(thisDept, (c, v) -> {
+            c.add(v);
+            return c;
+        }, LinkedList::new);
     }
 
     /**
