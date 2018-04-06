@@ -18,5 +18,10 @@ public enum ShuffleType {
     /**
      * 合并类型
      */
-    COMBINE
+    COMBINE,
+
+    /**
+     * Join操作类型
+     */
+    JOIN
 }

@@ -162,8 +162,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 连接后的(Key, Tuple) PairMonad对象
      */
     @Override
-    public <NK> PairMonad<K, Tuple<V, NK>> join(@NotNull PairMonad<K, NK> otherPairMonad) {
-        return null;
+    public <NV> PairMonad<K, Tuple<V, NV>> join(@NotNull PairMonad<K, NV> otherPairMonad) {
+        return new JoinImpl<>(thisDept, otherPairMonad);
     }
 
     /**

@@ -41,7 +41,7 @@ public enum TransformationalType {
     UNION,
 
     /**
-     * Pair的Shuffle操作
+     * Pair的一般Shuffle操作
      */
     SHUFFLE
 }
