@@ -23,6 +23,12 @@ public class SortImpl<T> extends CommonMonadImpl<T> implements Transformation {
     private final Optional<Comparator<T>> sortRule;
 
     /**
+     * 上层依赖对象
+     */
+    private final Dependency<T> father;
+
+
+    /**
      * 注入上层依赖的构造函数
      *
      * @param father     上层依赖对象
@@ -30,7 +36,8 @@ public class SortImpl<T> extends CommonMonadImpl<T> implements Transformation {
      */
     public SortImpl(@NotNull Dependency<T> father, @NotNull Optional<Comparator<T>> comparator) {
         super(father);
-        sortRule = comparator;
+        this.father = father;
+        this.sortRule = comparator;
     }
 
     /**
@@ -48,5 +55,15 @@ public class SortImpl<T> extends CommonMonadImpl<T> implements Transformation {
     @Override
     public TransformationalType type() {
         return TransformationalType.SORT;
+    }
+
+    /**
+     * 重写toString方法，方便Debug时观察Monad类型
+     *
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
+     */
+    @Override
+    public String toString() {
+        return "SortCommandMonad:father dependency is" + father;
     }
 }

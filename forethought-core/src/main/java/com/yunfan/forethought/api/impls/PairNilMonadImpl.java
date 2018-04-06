@@ -222,4 +222,9 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
     public Optional<Dependency<?>> getFatherDependency() {
         return Optional.empty();
     }
+
+    @Override
+    public String toString() {
+        return "PairNilMonad";
+    }
 }

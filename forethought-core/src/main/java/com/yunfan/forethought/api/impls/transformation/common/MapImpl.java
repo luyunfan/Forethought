@@ -22,6 +22,11 @@ public class MapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transforma
     private final Function<? super IN, ? extends OUT> mapFunc;
 
     /**
+     * 上层依赖对象
+     */
+    private final Dependency<IN> father;
+
+    /**
      * 注入上层依赖的构造函数
      *
      * @param father 上层依赖对象
@@ -29,7 +34,8 @@ public class MapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transforma
      */
     public MapImpl(@NotNull Dependency<IN> father, @NotNull Function<? super IN, ? extends OUT> f) {
         super(father);
-        mapFunc = f;
+        this.father = father;
+        this.mapFunc = f;
     }
 
     /**
@@ -48,5 +54,15 @@ public class MapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transforma
     @Override
     public TransformationalType type() {
         return TransformationalType.MAP;
+    }
+
+    /**
+     * 重写toString方法，方便Debug时观察Monad类型
+     *
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
+     */
+    @Override
+    public String toString() {
+        return "MapCommandMonad:father dependency is" + father;
     }
 }

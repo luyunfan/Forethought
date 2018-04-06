@@ -129,7 +129,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     @Override
     public boolean all(@NotNull Predicate<? super T> predicate) {
         PredicateImpl<T> action = new PredicateImpl<>(predicate, false);
-        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), action);
     }
 
     /**
@@ -141,7 +141,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     @Override
     public boolean any(@NotNull Predicate<? super T> predicate) {
         PredicateImpl<T> action = new PredicateImpl<>(predicate, true);
-        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), action);
     }
 
     /**
@@ -238,7 +238,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     @Override
     public T reduce(@NotNull BiFunction<T, T, T> reduceFunc) {
         ReduceImpl<T> action = new ReduceImpl<>(reduceFunc);
-        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), action);
     }
 
 
@@ -249,7 +249,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public Iterator<T> toIterator() {
-        return JobSubmitter.INSTANCE.submitTask(createDAG(this), new CollectImpl<>());
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new CollectImpl<>());
     }
 
     /**
@@ -344,17 +344,14 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     }
 
     /**
-     * 生成DAG
+     * 重写toString方法，方便Debug时观察Monad类型
      *
-     * @param finalMonad 最终的Monad对象
-     * @return 根据Monad依赖生成的DAG
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
      */
-    protected Graph<Monad<T>> createDAG(Monad<T> finalMonad) {
-        Graph<Monad<T>> result = new Graph<>();
-        //TODO 待实现
-        return result;
+    @Override
+    public String toString() {
+        return "CommandMonad:father dependency is" + fatherDependency;
     }
-
 }
 
 

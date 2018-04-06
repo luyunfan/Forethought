@@ -20,7 +20,7 @@ public abstract class ShuffleMonad<K, V> extends PairMonadImpl<K, V> implements 
      *
      * @param father 上层依赖对象
      */
-    public ShuffleMonad(@NotNull Dependency<?> father) {
+    ShuffleMonad(@NotNull Dependency<?> father) {
         super(father);
     }
 

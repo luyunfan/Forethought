@@ -24,6 +24,11 @@ public class DropImpl<T> extends CommonMonadImpl<T> implements Transformation {
     private final boolean isStartWithLeft;
 
     /**
+     * 上层依赖对象
+     */
+    private final Dependency<?> father;
+
+    /**
      * 注入上层依赖的构造函数
      *
      * @param father          上层依赖对象
@@ -31,6 +36,7 @@ public class DropImpl<T> extends CommonMonadImpl<T> implements Transformation {
      */
     public DropImpl(@NotNull Dependency<?> father, int dropNumber, boolean isStartWithLeft) {
         super(father);
+        this.father = father;
         this.dropNumber = dropNumber;
         this.isStartWithLeft = isStartWithLeft;
     }
@@ -55,5 +61,15 @@ public class DropImpl<T> extends CommonMonadImpl<T> implements Transformation {
     @Override
     public TransformationalType type() {
         return TransformationalType.DROP;
+    }
+
+    /**
+     * 重写toString方法，方便Debug时观察Monad类型
+     *
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
+     */
+    @Override
+    public String toString() {
+        return "DropCommandMonad:father dependency is" + father;
     }
 }

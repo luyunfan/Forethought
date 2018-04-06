@@ -1,6 +1,7 @@
 package com.yunfan.forethought.api.monad;
 
 import com.yunfan.forethought.api.dependency.Dependency;
+import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.enums.MonadType;
 import org.jetbrains.annotations.NotNull;
 
@@ -122,4 +123,23 @@ public interface Monad<T> {
      */
     Optional<Dependency<?>> getFatherDependency();
 
+    /**
+     * 从当前Monad对象中生成生成DAG
+     *
+     * @return 根据Monad依赖生成的DAG
+     */
+    default Graph<Monad> createDAG() {
+        Graph<Monad> result = new Graph<>();
+        Monad temp = this;
+        while (temp != null) {
+            result.addVertex(temp);
+            if (getFatherDependency().isPresent()) { //还有上层依赖
+                Monad father = getFatherDependency().get().get();
+                result.addVertex(father);
+                result.addDirectedEdge(father, temp);
+                temp = father;
+            }
+        }
+        return result;
+    }
 }

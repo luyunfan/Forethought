@@ -24,13 +24,19 @@ public class FlatMapImpl<IN, K, V> extends PairMonadImpl<K, V> implements Transf
     private Function<? super IN, ? extends PairMonad<? extends K, ? extends V>> mapFunc;
 
     /**
+     * 上层依赖对象
+     */
+    private final Dependency<?> father;
+
+    /**
      * 注入上层依赖的构造函数
      *
      * @param father 上层依赖对象
      */
     public FlatMapImpl(@NotNull Dependency<?> father, @NotNull Function<? super IN, ? extends PairMonad<? extends K, ? extends V>> f) {
         super(father);
-        mapFunc = f;
+        this.father = father;
+        this.mapFunc = f;
     }
 
     /**
@@ -49,5 +55,15 @@ public class FlatMapImpl<IN, K, V> extends PairMonadImpl<K, V> implements Transf
     @Override
     public TransformationalType type() {
         return TransformationalType.FLATMAP;
+    }
+
+    /**
+     * 重写toString方法，方便Debug时观察Monad类型
+     *
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
+     */
+    @Override
+    public String toString() {
+        return "FlatMapPairMonad:father dependency is" + father;
     }
 }

@@ -13,7 +13,17 @@ public class Graph<T> {
     /**
      * 图的顶点集合
      */
-    private List<Vertex<T>> items;
+    private final List<Vertex<T>> items;
+
+    /**
+     * 图中边的数量
+     */
+    private int edgeNum = 0;
+
+    /**
+     * 图中顶点的数量
+     */
+    private int vertexNum = 0;
 
     /**
      * 图的构造方法
@@ -40,6 +50,7 @@ public class Graph<T> {
         if (this.contains(item)) //不允许插入重复顶点值
             throw new IllegalArgumentException("插入了重复顶点！");
         items.add(new Vertex<>(item));
+        vertexNum++;
     }
 
     /**
@@ -54,6 +65,20 @@ public class Graph<T> {
         //无向边两个顶点都要记录信息
         this.addDirectedEdge(fromVertex, toVertex);
         this.addDirectedEdge(toVertex, fromVertex);
+        edgeNum++;
+    }
+
+    /**
+     * 在两个顶点之间添加有向边
+     *
+     * @param from 第一个顶点元素
+     * @param to   第二个顶点元素
+     */
+    public void addDirectedEdge(T from, T to) {
+        Vertex<T> fromVertex = this.find(from).orElseThrow(() -> new IllegalArgumentException("头顶点并不存在！"));
+        Vertex<T> toVertex = this.find(to).orElseThrow(() -> new IllegalArgumentException("尾顶点并不存在！"));
+        this.addDirectedEdge(fromVertex, toVertex);
+        edgeNum++;
     }
 
     /**
@@ -62,7 +87,7 @@ public class Graph<T> {
      * @param fromVertex 第一个顶点
      * @param toVertex   第二个顶点
      */
-    public void addDirectedEdge(Vertex<T> fromVertex, Vertex<T> toVertex) {
+    private void addDirectedEdge(Vertex<T> fromVertex, Vertex<T> toVertex) {
         if (fromVertex.getFirstEdge() == null) {
             fromVertex.setFirstEdge(new Node<>(toVertex));
         } else {
@@ -199,5 +224,19 @@ public class Graph<T> {
             result.append(System.getProperty("line.separator")); //换行
         }
         return result.toString();
+    }
+
+    /**
+     * @return 图中边的数量
+     */
+    public int getEdgeNum() {
+        return edgeNum;
+    }
+
+    /**
+     * @return 图中顶点的数量
+     */
+    public int getVertexNum() {
+        return vertexNum;
     }
 }

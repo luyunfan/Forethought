@@ -20,6 +20,12 @@ public class TakeImpl<T> extends CommonMonadImpl<T> implements Transformation {
     private final Predicate<T> takeFunc;
 
     /**
+     * 上层依赖对象
+     */
+    private final Dependency<?> father;
+
+
+    /**
      * 注入上层依赖的构造函数
      *
      * @param father   上层依赖对象
@@ -27,6 +33,7 @@ public class TakeImpl<T> extends CommonMonadImpl<T> implements Transformation {
      */
     public TakeImpl(Dependency<?> father, Predicate<T> takeFunc) {
         super(father);
+        this.father = father;
         this.takeFunc = takeFunc;
     }
 
@@ -46,5 +53,15 @@ public class TakeImpl<T> extends CommonMonadImpl<T> implements Transformation {
     @Override
     protected Predicate<T> getTransformationalFunction() {
         return takeFunc;
+    }
+
+    /**
+     * 重写toString方法，方便Debug时观察Monad类型
+     *
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
+     */
+    @Override
+    public String toString() {
+        return "TakeCommandMonad:father dependency is" + father;
     }
 }

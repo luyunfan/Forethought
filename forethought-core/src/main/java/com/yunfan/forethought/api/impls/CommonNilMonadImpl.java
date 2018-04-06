@@ -191,4 +191,9 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
     public CommonMonad<T> sort() {
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "CommonNilMonad";
+    }
 }

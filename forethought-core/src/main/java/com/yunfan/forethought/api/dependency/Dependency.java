@@ -17,4 +17,12 @@ public abstract class Dependency<T> implements Serializable {
      * @return 上层依赖Monad对象
      */
     public abstract Monad<T> get();
+
+    /**
+     * @return 依赖Monad的字符串
+     */
+    @Override
+    public String toString() {
+        return get().toString();
+    }
 }

@@ -19,6 +19,10 @@ public class UnionImpl<T> extends CommonMonadImpl<T> implements Transformation {
      */
     private final CommonMonad<? extends T> other;
 
+    /**
+     * 上层依赖对象
+     */
+    private final Dependency<?> father;
 
     /**
      * 注入上层依赖的构造函数
@@ -27,6 +31,7 @@ public class UnionImpl<T> extends CommonMonadImpl<T> implements Transformation {
      */
     public UnionImpl(@NotNull Dependency<?> father, @NotNull CommonMonad<? extends T> other) {
         super(father);
+        this.father = father;
         this.other = other;
     }
 
@@ -43,5 +48,15 @@ public class UnionImpl<T> extends CommonMonadImpl<T> implements Transformation {
     @Override
     public TransformationalType type() {
         return TransformationalType.UNION;
+    }
+
+    /**
+     * 重写toString方法，方便Debug时观察Monad类型
+     *
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
+     */
+    @Override
+    public String toString() {
+        return "UnionCommandMonad:father dependency is" + father;
     }
 }

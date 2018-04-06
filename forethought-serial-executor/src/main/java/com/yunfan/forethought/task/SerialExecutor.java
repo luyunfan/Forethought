@@ -25,12 +25,11 @@ public class SerialExecutor implements Executor {
      *
      * @param dag    描述任务的DAG
      * @param action 代表最终Action操作的对象
-     * @param <T>    描述任务中Monad的元素类型
      * @param <R>    最终操作返回值类型
      * @param <F>    Action操作附带的函数类型
      */
     @Override
-    public <T, R, F> R execute(Graph<Monad<T>> dag, Action<R, F> action) {
+    public <R, F> R execute(Graph<Monad> dag, Action<R, F> action) {
         return null;
     }
 

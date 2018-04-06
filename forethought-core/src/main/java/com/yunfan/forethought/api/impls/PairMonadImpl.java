@@ -229,7 +229,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public boolean all(@NotNull Predicate<? super Tuple<K, V>> predicate) {
         PredicateImpl<Tuple<K, V>> action = new PredicateImpl<>(predicate, false);
-        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), action);
     }
 
     /**
@@ -241,7 +241,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public boolean any(@NotNull Predicate<? super Tuple<K, V>> predicate) {
         PredicateImpl<Tuple<K, V>> action = new PredicateImpl<>(predicate, true);
-        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), action);
     }
 
     /**
@@ -340,7 +340,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public Tuple<K, V> reduce(@NotNull BiFunction<Tuple<K, V>, Tuple<K, V>, Tuple<K, V>> reduceFunc) {
         ReduceImpl<Tuple<K, V>> action = new ReduceImpl<>(reduceFunc);
-        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), action);
     }
 
     /**
@@ -351,7 +351,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public Iterator<Tuple<K, V>> toIterator() {
         CollectImpl<Tuple<K, V>> action = new CollectImpl<>();
-        return JobSubmitter.INSTANCE.submitTask(createDAG(this), action);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), action);
     }
 
     /**
@@ -382,14 +382,12 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     }
 
     /**
-     * 生成DAG
+     * 重写toString方法，方便Debug时观察Monad类型
      *
-     * @param finalMonad 最终的Monad对象
-     * @return 根据Monad依赖生成的DAG
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
      */
-    protected Graph<Monad<Tuple<K, V>>> createDAG(Monad<Tuple<K, V>> finalMonad) {
-        Graph<Monad<Tuple<K, V>>> result = new Graph<>();
-        //TODO 待实现
-        return result;
+    @Override
+    public String toString() {
+        return "PairMonad:father dependency is" + fatherDependency;
     }
 }

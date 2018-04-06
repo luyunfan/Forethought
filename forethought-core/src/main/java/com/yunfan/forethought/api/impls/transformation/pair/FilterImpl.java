@@ -23,6 +23,11 @@ public class FilterImpl<K, V> extends PairMonadImpl<K, V> implements Transformat
     private final Predicate<? super Tuple<K, V>> filterFunc;
 
     /**
+     * 上层依赖对象
+     */
+    private final Dependency<Tuple<K, V>> father;
+
+    /**
      * 注入上层依赖的构造函数
      *
      * @param father 上层依赖对象
@@ -30,7 +35,8 @@ public class FilterImpl<K, V> extends PairMonadImpl<K, V> implements Transformat
      */
     public FilterImpl(@NotNull Dependency<Tuple<K, V>> father, @NotNull Predicate<? super Tuple<K, V>> f) {
         super(father);
-        filterFunc = f;
+        this.father = father;
+        this.filterFunc = f;
     }
 
     /**
@@ -49,5 +55,15 @@ public class FilterImpl<K, V> extends PairMonadImpl<K, V> implements Transformat
     @Override
     public TransformationalType type() {
         return TransformationalType.FILTER;
+    }
+
+    /**
+     * 重写toString方法，方便Debug时观察Monad类型
+     *
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
+     */
+    @Override
+    public String toString() {
+        return "FilterPairMonad:father dependency is" + father;
     }
 }

@@ -21,6 +21,10 @@ public class UnionImpl<K, V> extends PairMonadImpl<K, V> implements Transformati
      */
     private final PairMonad<K, V> other;
 
+    /**
+     * 上层依赖对象
+     */
+    private final Dependency<?> father;
 
     /**
      * 注入上层依赖的构造函数
@@ -29,6 +33,7 @@ public class UnionImpl<K, V> extends PairMonadImpl<K, V> implements Transformati
      */
     public UnionImpl(@NotNull Dependency<?> father, @NotNull PairMonad<K, V> other) {
         super(father);
+        this.father = father;
         this.other = other;
     }
 
@@ -45,5 +50,15 @@ public class UnionImpl<K, V> extends PairMonadImpl<K, V> implements Transformati
     @Override
     public TransformationalType type() {
         return TransformationalType.UNION;
+    }
+
+    /**
+     * 重写toString方法，方便Debug时观察Monad类型
+     *
+     * @return {Monad类型}:father dependency is {父依赖Monad字符串}
+     */
+    @Override
+    public String toString() {
+        return "UnionPairMonad:father dependency is" + father;
     }
 }
