@@ -1,21 +1,12 @@
-package com.yunfan.forethougth.test;
-
 import com.yunfan.forethought.api.MonadFactory;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.type.Tuple;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
 import org.junit.Test;
 
-
-/**
- * Monad测试类
- */
-public class MonadTest {
+public class TestExecutor {
 
     @Test
-    public void testMonadFactory() throws Exception {
-
+    public void testExecutor() {
         MonadFactory factory = MonadFactory.createMonadFactory();
         Integer[] testArray = {1, 2, 3, 4, 5};
         CommonMonad<Integer> monad = factory.from(testArray);

@@ -63,6 +63,6 @@ public class FlatMapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transf
      */
     @Override
     public String toString() {
-        return "FlatMapCommandMonad:father dependency is" + father;
+        return String.format("FlatMapCommandMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

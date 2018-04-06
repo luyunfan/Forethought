@@ -62,6 +62,6 @@ public class FilterImpl<T> extends CommonMonadImpl<T> implements Transformation 
      */
     @Override
     public String toString() {
-        return "FilterCommandMonad:father dependency is" + father;
+        return String.format("FilterCommandMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

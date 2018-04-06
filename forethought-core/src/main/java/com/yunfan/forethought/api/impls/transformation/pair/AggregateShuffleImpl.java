@@ -62,6 +62,6 @@ public class AggregateShuffleImpl<K, V> extends ShuffleMonad<K, V> {
      */
     @Override
     public String toString() {
-        return "AggregatePairMonad:father dependency is" + father;
+        return String.format("AggregatePairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

@@ -225,6 +225,6 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
 
     @Override
     public String toString() {
-        return "PairNilMonad";
+        return String.format("PairNilMonad%s", System.getProperty("line.separator"));
     }
 }

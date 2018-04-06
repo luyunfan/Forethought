@@ -60,6 +60,6 @@ public class JoinImpl<K, V, NV> extends ShuffleMonad<K, Tuple<V, NV>> implements
      */
     @Override
     public String toString() {
-        return "JoinPairMonad:father dependency is" + father;
+        return String.format("JoinPairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

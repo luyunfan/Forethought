@@ -64,6 +64,6 @@ public class FilterImpl<K, V> extends PairMonadImpl<K, V> implements Transformat
      */
     @Override
     public String toString() {
-        return "FilterPairMonad:father dependency is" + father;
+        return String.format("FilterPairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

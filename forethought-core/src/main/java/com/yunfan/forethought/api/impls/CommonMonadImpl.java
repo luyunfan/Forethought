@@ -350,7 +350,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public String toString() {
-        return "CommandMonad:father dependency is" + fatherDependency;
+        return String.format("CommandMonad:father dependency is %s%s", fatherDependency, System.getProperty("line.separator"));
     }
 }
 

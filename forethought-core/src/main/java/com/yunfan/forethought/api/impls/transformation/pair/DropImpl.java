@@ -71,6 +71,6 @@ public class DropImpl<K, V> extends PairMonadImpl<K, V> implements Transformatio
      */
     @Override
     public String toString() {
-        return "DropPairMonad:father dependency is" + father;
+        return String.format("DropPairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

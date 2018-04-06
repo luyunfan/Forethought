@@ -388,6 +388,6 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public String toString() {
-        return "PairMonad:father dependency is" + fatherDependency;
+        return String.format("PairMonad:father dependency is %s%s", fatherDependency, System.getProperty("line.separator"));
     }
 }

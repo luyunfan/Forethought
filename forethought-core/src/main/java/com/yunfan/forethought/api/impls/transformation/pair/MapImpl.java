@@ -65,6 +65,6 @@ public class MapImpl<IN, K2, V2> extends PairMonadImpl<K2, V2> implements Transf
      */
     @Override
     public String toString() {
-        return "MapPairMonad:father dependency is" + father;
+        return String.format("MapPairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

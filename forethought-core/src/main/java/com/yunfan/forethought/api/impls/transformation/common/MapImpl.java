@@ -63,6 +63,6 @@ public class MapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transforma
      */
     @Override
     public String toString() {
-        return "MapCommandMonad:father dependency is" + father;
+        return String.format("MapCommandMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

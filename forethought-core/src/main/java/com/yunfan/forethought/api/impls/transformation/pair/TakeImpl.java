@@ -63,6 +63,6 @@ public class TakeImpl<K, V> extends PairMonadImpl<K, V> implements Transformatio
      */
     @Override
     public String toString() {
-        return "TakePairMonad:father dependency is" + father;
+        return String.format("TakePairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

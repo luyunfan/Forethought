@@ -70,6 +70,6 @@ public class DropImpl<T> extends CommonMonadImpl<T> implements Transformation {
      */
     @Override
     public String toString() {
-        return "DropCommandMonad:father dependency is" + father;
+        return String.format("DropCommandMonad:father dependency is %s", System.getProperty("line.separator"));
     }
 }

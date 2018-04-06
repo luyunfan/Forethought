@@ -64,6 +64,6 @@ public class SortImpl<T> extends CommonMonadImpl<T> implements Transformation {
      */
     @Override
     public String toString() {
-        return "SortCommandMonad:father dependency is" + father;
+        return String.format("SortCommandMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

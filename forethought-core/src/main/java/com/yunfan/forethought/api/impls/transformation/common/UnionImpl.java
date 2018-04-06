@@ -57,6 +57,6 @@ public class UnionImpl<T> extends CommonMonadImpl<T> implements Transformation {
      */
     @Override
     public String toString() {
-        return "UnionCommandMonad:father dependency is" + father;
+        return String.format("UnionCommandMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

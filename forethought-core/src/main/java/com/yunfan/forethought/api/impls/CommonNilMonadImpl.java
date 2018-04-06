@@ -194,6 +194,6 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
 
     @Override
     public String toString() {
-        return "CommonNilMonad";
+        return String.format("CommonNilMonad%s", System.getProperty("line.separator"));
     }
 }

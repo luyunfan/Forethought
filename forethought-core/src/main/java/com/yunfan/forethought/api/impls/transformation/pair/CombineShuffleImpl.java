@@ -73,7 +73,7 @@ public class CombineShuffleImpl<K, V> extends ShuffleMonad<K, Collection<V>> {
      */
     @Override
     public String toString() {
-        return "CombinePairMonad:father dependency is" + father;
+        return String.format("CombinePairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 
 }

@@ -59,6 +59,6 @@ public class UnionImpl<K, V> extends PairMonadImpl<K, V> implements Transformati
      */
     @Override
     public String toString() {
-        return "UnionPairMonad:father dependency is" + father;
+        return String.format("UnionPairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

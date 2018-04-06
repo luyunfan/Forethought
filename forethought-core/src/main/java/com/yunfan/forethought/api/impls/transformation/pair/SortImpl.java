@@ -64,7 +64,7 @@ public class SortImpl<K, V> extends PairMonadImpl<K, V> implements Transformatio
      */
     @Override
     public String toString() {
-        return "SortPairMonad:father dependency is" + father;
+        return String.format("SortPairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 
 }

@@ -64,6 +64,6 @@ public class FlatMapImpl<IN, K, V> extends PairMonadImpl<K, V> implements Transf
      */
     @Override
     public String toString() {
-        return "FlatMapPairMonad:father dependency is" + father;
+        return String.format("FlatMapPairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

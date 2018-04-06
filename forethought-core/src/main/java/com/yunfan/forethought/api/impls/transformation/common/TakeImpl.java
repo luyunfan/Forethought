@@ -62,6 +62,6 @@ public class TakeImpl<T> extends CommonMonadImpl<T> implements Transformation {
      */
     @Override
     public String toString() {
-        return "TakeCommandMonad:father dependency is" + father;
+        return String.format("TakeCommandMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }

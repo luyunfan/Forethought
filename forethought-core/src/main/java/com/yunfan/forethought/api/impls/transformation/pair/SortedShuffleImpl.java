@@ -42,6 +42,6 @@ public class SortedShuffleImpl<K, V> extends ShuffleMonad<K, V> {
      */
     @Override
     public String toString() {
-        return "SortedPairMonad:father dependency is" + father;
+        return String.format("SortedPairMonad:father dependency is %s%s", father, System.getProperty("line.separator"));
     }
 }
