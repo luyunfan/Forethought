@@ -128,9 +128,9 @@ public interface Monad<T> {
      *
      * @return 根据Monad依赖生成的DAG
      */
-    default Graph<Monad> createDAG() {
-        Graph<Monad> result = new Graph<>();
-        Monad temp = this;
+    default Graph<Monad<?>> createDAG() {
+        Graph<Monad<?>> result = new Graph<>();
+        Monad<?> temp = this;
         while (temp != null) {
             try {
                 result.addVertex(temp);

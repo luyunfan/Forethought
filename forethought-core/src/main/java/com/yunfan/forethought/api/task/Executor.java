@@ -5,7 +5,6 @@ import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.enums.ExecutorType;
 import com.yunfan.forethought.exception.DependencyClassNotFoundException;
-import com.yunfan.forethought.model.Job;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,7 @@ public interface Executor {
      * @param <R>    最终操作返回值类型
      * @param <F>    Action操作附带的函数类型
      */
-    <R, F> R execute(Graph<Monad> dag, Action<R, F> action);
+    <R, F> R execute(Graph<Monad<?>> dag, Action<R, F> action);
 
     /**
      * 获取执行引擎的静态方法，执行引擎实现通过spi注入实现

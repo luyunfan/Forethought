@@ -29,7 +29,7 @@ public class SerialExecutor implements Executor {
      * @param <F>    Action操作附带的函数类型
      */
     @Override
-    public <R, F> R execute(Graph<Monad> dag, Action<R, F> action) {
+    public <R, F> R execute(Graph<Monad<?>> dag, Action<R, F> action) {
         return null;
     }
 

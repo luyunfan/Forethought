@@ -20,7 +20,7 @@ public enum JobSubmitter {
      * @param <R> 最终操作返回值类型
      * @param <F> Action操作附带的函数类型
      */
-    public < R, F> R submitTask(Graph<Monad> dag, Action<R, F> action) {
+    public < R, F> R submitTask(Graph<Monad<?>> dag, Action<R, F> action) {
         return executor.execute(dag, action);
     }
 
