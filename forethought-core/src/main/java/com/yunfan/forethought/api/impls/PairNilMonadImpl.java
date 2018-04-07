@@ -2,8 +2,8 @@ package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.monad.CommonMonad;
-import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
+import com.yunfan.forethought.iterators.RepeatableIterator;
 import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
 
@@ -213,6 +213,14 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public boolean isDataSource() {
         return true;
+    }
+
+    /**
+     * @return Monad的数据源
+     */
+    @Override
+    public Optional<RepeatableIterator<Tuple<K, V>>> getDataSource() {
+        return Optional.empty();
     }
 
     /**

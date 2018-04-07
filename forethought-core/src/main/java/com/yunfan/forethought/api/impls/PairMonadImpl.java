@@ -365,6 +365,14 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     }
 
     /**
+     * @return Monad的数据源
+     */
+    @Override
+    public Optional<RepeatableIterator<Tuple<K, V>>> getDataSource() {
+        return dataSource == null ? Optional.empty() : Optional.of(dataSource);
+    }
+
+    /**
      * @return 返回本Monad的上层依赖
      */
     @Override

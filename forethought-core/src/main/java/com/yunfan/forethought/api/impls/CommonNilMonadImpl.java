@@ -4,6 +4,7 @@ import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
+import com.yunfan.forethought.iterators.RepeatableIterator;
 import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
 
@@ -146,6 +147,14 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
     @Override
     public boolean isDataSource() {
         return true;
+    }
+
+    /**
+     * @return Monad的数据源
+     */
+    @Override
+    public Optional<RepeatableIterator<T>> getDataSource() {
+        return Optional.empty();
     }
 
     /**

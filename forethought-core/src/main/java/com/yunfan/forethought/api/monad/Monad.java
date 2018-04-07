@@ -3,6 +3,7 @@ package com.yunfan.forethought.api.monad;
 import com.yunfan.forethought.api.dependency.Dependency;
 import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.enums.MonadType;
+import com.yunfan.forethought.iterators.RepeatableIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -112,6 +113,11 @@ public interface Monad<T> {
      * @return 是否是包含数据的第一个Monad
      */
     boolean isDataSource();
+
+    /**
+     * @return Monad的数据源
+     */
+    Optional<RepeatableIterator<T>> getDataSource();
 
     /**
      * @return 当前Monad的类型

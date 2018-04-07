@@ -205,6 +205,27 @@ public class Graph<T> {
     }
 
     /**
+     * 按添加顺序遍历顶点元素
+     *
+     * @param consumer 遍历的函数
+     */
+    public void forEach(Consumer<T> consumer) {
+        items.forEach(vertex -> consumer.accept(vertex.getData()));
+    }
+
+    /**
+     * 按添加顺序的逆序遍历顶点元素
+     *
+     * @param consumer 遍历的函数
+     */
+    public void forEachReverse(Consumer<T> consumer) {
+        List<Vertex<T>> temp = new LinkedList<>();
+        Collections.copy(temp, items);
+        Collections.reverse(temp);
+        temp.forEach(vertex -> consumer.accept(vertex.getData()));
+    }
+
+    /**
      * 重写图的toString方法
      *
      * @return 顶点对应邻接表字符串
@@ -238,5 +259,16 @@ public class Graph<T> {
      */
     public int getVertexNum() {
         return vertexNum;
+    }
+
+    /**
+     * @return 顶点元素集合
+     */
+    public List<T> getVertexes() {
+        List<T> result = new LinkedList<>();
+        for (Vertex<T> vertex : items) {
+            result.add(vertex.getData());
+        }
+        return result;
     }
 }

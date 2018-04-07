@@ -3,9 +3,11 @@ package com.yunfan.forethought.task;
 import com.yunfan.forethought.api.impls.action.Action;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.task.Executor;
-import com.yunfan.forethought.enums.ExecutorType;
 import com.yunfan.forethought.dag.Graph;
-import com.yunfan.forethought.model.Job;
+import com.yunfan.forethought.enums.ExecutorType;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 单线程串行执行引擎实现
@@ -30,7 +32,23 @@ public class SerialExecutor implements Executor {
      */
     @Override
     public <R, F> R execute(Graph<Monad<?>> dag, Action<R, F> action) {
-        return null;
+        List<Monad<?>> vertexes = dag.getVertexes();
+        Collections.reverse(vertexes);
+        TaskQueue<R> taskQueue = null;
+        for (Monad<?> item : vertexes) {
+            if (item.getFatherDependency() == null && item.isDataSource() && item.getDataSource().isPresent()) {
+                taskQueue = new TaskQueue<>(item.getDataSource().get(), action);
+            } else if (item.getFatherDependency() != null && taskQueue != null) { //添加中间转换操作
+                taskQueue.addTask(item);
+            } else {
+                throw new IllegalStateException("Monad既不是数据源，也没有上层依赖，执行引擎无法执行！");
+            }
+        }
+        if (taskQueue != null)
+            return taskQueue.run();
+        else
+            throw new IllegalStateException("执行引擎中taskQueue未被正确初始化！");
     }
+
 
 }

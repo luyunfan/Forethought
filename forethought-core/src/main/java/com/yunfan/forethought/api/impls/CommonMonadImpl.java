@@ -263,6 +263,14 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     }
 
     /**
+     * @return Monad的数据源
+     */
+    @Override
+    public Optional<RepeatableIterator<T>> getDataSource() {
+        return dataSource == null ? Optional.empty() : Optional.of(dataSource);
+    }
+
+    /**
      * @return 返回本Monad的上层依赖
      */
     @Override
