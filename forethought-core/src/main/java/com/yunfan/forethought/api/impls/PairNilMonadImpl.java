@@ -64,12 +64,12 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
 
     @Override
     public Tuple<K, V> first() {
-        throw new UnsupportedOperationException("空集合");
+        return null;
     }
 
     @Override
-    public PairMonad<K, V> take(int takeNum) {
-        return this;
+    public List<Tuple<K, V>> take(int takeNum) {
+        return new ArrayList<>(0);
     }
 
     /**
@@ -91,8 +91,8 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出的元素组成的Monad对象
      */
     @Override
-    public PairMonad<K, V> takeWhile(@NotNull Predicate<Tuple<K, V>> func) {
-        return this;
+    public List<Tuple<K, V>> takeWhile(@NotNull Predicate<Tuple<K, V>> func) {
+        return new ArrayList<>(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -145,28 +145,28 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
     }
 
     @Override
-    public PairMonad<K,V> drop() {
-        return this;
+    public List<Tuple<K, V>> drop() {
+        return new ArrayList<>(0);
     }
 
     @Override
-    public PairMonad<K,V> drop(int dropNum) {
-        return this;
+    public List<Tuple<K, V>> drop(int dropNum) {
+        return new ArrayList<>(0);
     }
 
     @Override
-    public PairMonad<K,V> dropRight() {
-        return this;
+    public List<Tuple<K, V>> dropRight() {
+        return new ArrayList<>(0);
     }
 
     @Override
-    public PairMonad<K,V> dropRight(int dropNum) {
-        return this;
+    public List<Tuple<K, V>> dropRight(int dropNum) {
+        return new ArrayList<>(0);
     }
 
     @Override
     public Tuple<K, V> reduce(@NotNull BiFunction<Tuple<K, V>, Tuple<K, V>, Tuple<K, V>> reduceFunc) {
-        throw new UnsupportedOperationException("空集合");
+        return null;
     }
 
     @SuppressWarnings("unchecked")

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -75,7 +76,7 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param takeNum 取出的元素数量
      * @return 取出的元素组成的Map对象
      */
-    PairMonad<K, V> take(int takeNum);
+    List<Tuple<K, V>> take(int takeNum);
 
     /**
      * 对本集合每一个元素进行映射操作，将元素映射成不同的类型
@@ -119,14 +120,14 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param func 取出元素直到成立的验证函数
      * @return 取出的元素组成的Monad对象
      */
-    PairMonad<K, V> takeWhile(Predicate<Tuple<K, V>> func);
+    List<Tuple<K, V>> takeWhile(Predicate<Tuple<K, V>> func);
 
     /**
      * 从集合起始端取出一个元素组成集合
      *
      * @return 取出一个元素后的元素集合
      */
-    PairMonad<K, V> drop();
+    List<Tuple<K, V>> drop();
 
     /**
      * 从集合起始端取出一些元素组成集合
@@ -134,14 +135,14 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    PairMonad<K, V> drop(int dropNum);
+    List<Tuple<K, V>> drop(int dropNum);
 
     /**
      * 从集合末端取出一个元素组成集合
      *
      * @return 取出一个元素后的元素集合
      */
-    PairMonad<K, V> dropRight();
+    List<Tuple<K, V>> dropRight();
 
     /**
      * 从集合末端取出一些元素组成集合
@@ -149,7 +150,7 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    PairMonad<K, V> dropRight(int dropNum);
+    List<Tuple<K, V>> dropRight(int dropNum);
 
     /**
      * 对其它Key相同的PairMonad执行内连接操作，得到连接后的PairMonad对象

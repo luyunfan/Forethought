@@ -1,15 +1,12 @@
 package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
-import com.yunfan.forethought.api.impls.action.CollectImpl;
-import com.yunfan.forethought.api.impls.action.PredicateImpl;
-import com.yunfan.forethought.api.impls.action.ReduceImpl;
+import com.yunfan.forethought.api.impls.action.*;
 import com.yunfan.forethought.api.impls.transformation.common.*;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.api.task.JobSubmitter;
-import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.iterators.RepeatableIterator;
 import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -193,8 +191,8 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 扔掉一个元素后的元素集合
      */
     @Override
-    public CommonMonad<T> drop() {
-        return new DropImpl<>(thisDept, 1, true);
+    public List<T> drop() {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(1, true));
     }
 
     /**
@@ -204,8 +202,8 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public CommonMonad<T> drop(int dropNum) {
-        return new DropImpl<>(thisDept, dropNum, true);
+    public List<T> drop(int dropNum) {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(dropNum, true));
     }
 
     /**
@@ -214,8 +212,8 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 取出一个元素后的元素集合
      */
     @Override
-    public CommonMonad<T> dropRight() {
-        return new DropImpl<>(thisDept, 1, false);
+    public List<T> dropRight() {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(1, false));
     }
 
     /**
@@ -225,8 +223,8 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public CommonMonad<T> dropRight(int dropNum) {
-        return new DropImpl<>(thisDept, dropNum, false);
+    public List<T> dropRight(int dropNum) {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(dropNum, false));
     }
 
     /**
@@ -285,9 +283,9 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 取出的元素组成的CommonMonad对象
      */
     @Override
-    public CommonMonad<T> take(int takeNum) {
+    public List<T> take(int takeNum) {
         int[] temp = {takeNum};
-        return new TakeImpl<>(thisDept, item -> temp[0]-- == 0);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new TakeImpl<>(item -> temp[0]-- == 0));
     }
 
     /**
@@ -297,8 +295,8 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 取出的元素组成的Monad对象
      */
     @Override
-    public CommonMonad<T> takeWhile(@NotNull Predicate<T> func) {
-        return new TakeImpl<>(thisDept, func);
+    public List<T> takeWhile(@NotNull Predicate<T> func) {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new TakeImpl<>(func));
     }
 
     /**

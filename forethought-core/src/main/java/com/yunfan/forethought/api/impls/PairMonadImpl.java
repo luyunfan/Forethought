@@ -1,15 +1,11 @@
 package com.yunfan.forethought.api.impls;
 
 import com.yunfan.forethought.api.dependency.Dependency;
-import com.yunfan.forethought.api.impls.action.CollectImpl;
-import com.yunfan.forethought.api.impls.action.PredicateImpl;
-import com.yunfan.forethought.api.impls.action.ReduceImpl;
+import com.yunfan.forethought.api.impls.action.*;
 import com.yunfan.forethought.api.impls.transformation.pair.*;
 import com.yunfan.forethought.api.monad.CommonMonad;
-import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.api.task.JobSubmitter;
-import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.iterators.RepeatableIterator;
 import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -139,9 +135,9 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出的元素组成的Map对象
      */
     @Override
-    public PairMonad<K, V> take(int takeNum) {
+    public List<Tuple<K, V>> take(int takeNum) {
         int[] temp = {takeNum};
-        return new TakeImpl<>(thisDept, item -> temp[0]-- == 0);
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new TakeImpl<>(item -> temp[0]-- == 0));
     }
 
     /**
@@ -151,8 +147,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出的元素组成的Monad对象
      */
     @Override
-    public PairMonad<K, V> takeWhile(@NotNull Predicate<Tuple<K, V>> func) {
-        return new TakeImpl<>(thisDept, func);
+    public List<Tuple<K, V>> takeWhile(@NotNull Predicate<Tuple<K, V>> func) {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new TakeImpl<>(func));
     }
 
     /**
@@ -295,8 +291,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一个元素后的元素集合
      */
     @Override
-    public PairMonad<K, V> drop() {
-        return new DropImpl<>(thisDept, 1, true);
+    public List<Tuple<K, V>> drop() {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(1, true));
     }
 
     /**
@@ -306,8 +302,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public PairMonad<K, V> drop(int dropNum) {
-        return new DropImpl<>(thisDept, dropNum, true);
+    public List<Tuple<K, V>> drop(int dropNum) {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(dropNum, true));
     }
 
     /**
@@ -316,8 +312,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一个元素后的元素集合
      */
     @Override
-    public PairMonad<K, V> dropRight() {
-        return new DropImpl<>(thisDept, 1, false);
+    public List<Tuple<K, V>> dropRight() {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(1, false));
     }
 
     /**
@@ -327,8 +323,8 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public PairMonad<K, V> dropRight(int dropNum) {
-        return new DropImpl<>(thisDept, dropNum, false);
+    public List<Tuple<K, V>> dropRight(int dropNum) {
+        return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(dropNum, false));
     }
 
     /**

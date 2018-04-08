@@ -18,5 +18,15 @@ public enum ActionType {
     /**
      * 互相合并计算的类型
      */
-    REDUCE
+    REDUCE,
+
+    /**
+     * 删除元素操作
+     */
+    DROP,
+
+    /**
+     * 取元素操作
+     */
+    TAKE
 }

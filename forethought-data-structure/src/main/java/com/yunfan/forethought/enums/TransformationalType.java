@@ -26,16 +26,6 @@ public enum TransformationalType {
     SORT,
 
     /**
-     * 删除元素操作
-     */
-    DROP,
-
-    /**
-     * 取元素操作
-     */
-    TAKE,
-
-    /**
      * 合并Monad操作
      */
     UNION,

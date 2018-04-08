@@ -6,6 +6,7 @@ import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -37,7 +38,7 @@ public interface CommonMonad<T> extends Monad<T> {
      * @param takeNum 取出的元素数量
      * @return 取出的元素组成的Monad对象
      */
-    CommonMonad<T> take(int takeNum);
+    List<T> take(int takeNum);
 
     /**
      * 对本集合每一个元素进行映射操作，将元素映射成不同的类型
@@ -78,7 +79,7 @@ public interface CommonMonad<T> extends Monad<T> {
      * @param func 取出元素直到成立的验证函数
      * @return 取出的元素组成的Monad对象
      */
-    CommonMonad<T> takeWhile(Predicate<T> func);
+    List<T> takeWhile(Predicate<T> func);
 
     /**
      * 对其它同类型数据集合相连接，连接后将合并所有数据到一个新数据集合中
@@ -101,7 +102,7 @@ public interface CommonMonad<T> extends Monad<T> {
      *
      * @return 取出一个元素后的元素集合
      */
-    CommonMonad<T> drop();
+    List<T> drop();
 
     /**
      * 从集合起始端取出一些元素组成集合
@@ -109,14 +110,14 @@ public interface CommonMonad<T> extends Monad<T> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    CommonMonad<T> drop(int dropNum);
+    List<T> drop(int dropNum);
 
     /**
      * 从集合末端取出一个元素组成集合
      *
      * @return 取出一个元素后的元素集合
      */
-    CommonMonad<T> dropRight();
+    List<T> dropRight();
 
     /**
      * 从集合末端取出一些元素组成集合
@@ -124,7 +125,7 @@ public interface CommonMonad<T> extends Monad<T> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    CommonMonad<T> dropRight(int dropNum);
+    List<T> dropRight(int dropNum);
 
     /**
      * 对本集合进行排序操作

@@ -80,28 +80,28 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
     }
 
     @Override
-    public CommonMonad<T> drop() {
-        return this;
+    public List<T> drop() {
+        return new ArrayList<>(0);
     }
 
     @Override
-    public CommonMonad<T> drop(int dropNum) {
-        return this;
+    public List<T> drop(int dropNum) {
+        return new ArrayList<>(0);
     }
 
     @Override
-    public CommonMonad<T> dropRight() {
-        return this;
+    public List<T> dropRight() {
+        return new ArrayList<>(0);
     }
 
     @Override
-    public CommonMonad<T> dropRight(int dropNum) {
-        return this;
+    public List<T> dropRight(int dropNum) {
+        return new ArrayList<>(0);
     }
 
     @Override
     public T reduce(@NotNull BiFunction<T, T, T> reduceFunc) {
-        throw new UnsupportedOperationException("空集合");
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -172,12 +172,12 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
 
     @Override
     public T first() {
-        throw new UnsupportedOperationException("空集合");
+        return null;
     }
 
     @Override
-    public CommonMonad<T> take(int takeNum) {
-        return this;
+    public List<T> take(int takeNum) {
+        return new ArrayList<>(0);
     }
 
     /**
@@ -187,8 +187,8 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
      * @return 取出的元素组成的Monad对象
      */
     @Override
-    public CommonMonad<T> takeWhile(@NotNull Predicate<T> func) {
-        return this;
+    public List<T> takeWhile(@NotNull Predicate<T> func) {
+        return new ArrayList<>(0);
     }
 
     @Override
