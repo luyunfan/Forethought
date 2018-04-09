@@ -203,6 +203,9 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public List<T> drop(int dropNum) {
+        if (dropNum < 0) {
+            throw new IllegalArgumentException("drop函数的参数不能小于0");
+        }
         return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(dropNum, true));
     }
 
@@ -224,6 +227,9 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public List<T> dropRight(int dropNum) {
+        if (dropNum < 0) {
+            throw new IllegalArgumentException("drop函数的参数不能小于0");
+        }
         return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(dropNum, false));
     }
 
@@ -284,6 +290,9 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      */
     @Override
     public List<T> take(int takeNum) {
+        if (takeNum < 0) {
+            throw new IllegalArgumentException("take函数的参数不能小于0");
+        }
         int[] temp = {takeNum};
         return JobSubmitter.INSTANCE.submitTask(createDAG(), new TakeImpl<>(item -> temp[0]-- == 0));
     }

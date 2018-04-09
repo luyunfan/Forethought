@@ -136,6 +136,9 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public List<Tuple<K, V>> take(int takeNum) {
+        if (takeNum < 0) {
+            throw new IllegalArgumentException("take函数的参数不能小于0");
+        }
         int[] temp = {takeNum};
         return JobSubmitter.INSTANCE.submitTask(createDAG(), new TakeImpl<>(item -> temp[0]-- == 0));
     }
@@ -303,6 +306,9 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public List<Tuple<K, V>> drop(int dropNum) {
+        if (dropNum < 0) {
+            throw new IllegalArgumentException("drop函数的参数不能小于0");
+        }
         return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(dropNum, true));
     }
 
@@ -324,6 +330,9 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      */
     @Override
     public List<Tuple<K, V>> dropRight(int dropNum) {
+        if (dropNum < 0) {
+            throw new IllegalArgumentException("drop函数的参数不能小于0");
+        }
         return JobSubmitter.INSTANCE.submitTask(createDAG(), new DropImpl<>(dropNum, false));
     }
 

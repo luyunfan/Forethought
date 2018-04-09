@@ -86,6 +86,9 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
 
     @Override
     public List<T> drop(int dropNum) {
+        if (dropNum < 0) {
+            throw new IllegalArgumentException("drop函数的参数不能小于0");
+        }
         return new ArrayList<>(0);
     }
 
@@ -96,6 +99,9 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
 
     @Override
     public List<T> dropRight(int dropNum) {
+        if (dropNum < 0) {
+            throw new IllegalArgumentException("drop函数的参数不能小于0");
+        }
         return new ArrayList<>(0);
     }
 
@@ -177,6 +183,9 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
 
     @Override
     public List<T> take(int takeNum) {
+        if (takeNum < 0) {
+            throw new IllegalArgumentException("take函数的参数不能小于0");
+        }
         return new ArrayList<>(0);
     }
 

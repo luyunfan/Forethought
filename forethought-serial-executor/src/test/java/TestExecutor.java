@@ -18,17 +18,7 @@ public class TestExecutor {
         MonadFactory factory = MonadFactory.createMonadFactory();
 
         CommonMonad<Integer> monad = factory.from(new Integer[]{2, 2, 1, 3, 4, 5});
-        monad//.filter(i -> i < 4)
-                //.distinct()
-                //.union(factory.from(new Integer[]{6, 7, 8, 9, 10}))
-                //.mapToPair(item -> new Tuple<>(item, 1))
-                //.reduceByKey((a, b) -> a + b)
-                //.map(i -> i + "")
-
-                //.sort()
-                //.drop(1).forEach(System.out::println);
-
-                .mapToPair(item -> new Tuple<>(item + "A", 1))
+        monad.mapToPair(item -> new Tuple<>(item + "A", 1))
                 .reduceByKey((a, b) -> a + b)
                 .foreach(System.out::println);
 

@@ -69,6 +69,9 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
 
     @Override
     public List<Tuple<K, V>> take(int takeNum) {
+        if (takeNum < 0) {
+            throw new IllegalArgumentException("take函数的参数不能小于0");
+        }
         return new ArrayList<>(0);
     }
 
@@ -151,6 +154,9 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
 
     @Override
     public List<Tuple<K, V>> drop(int dropNum) {
+        if (dropNum < 0) {
+            throw new IllegalArgumentException("drop函数的参数不能小于0");
+        }
         return new ArrayList<>(0);
     }
 
@@ -161,6 +167,9 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
 
     @Override
     public List<Tuple<K, V>> dropRight(int dropNum) {
+        if (dropNum < 0) {
+            throw new IllegalArgumentException("drop函数的参数不能小于0");
+        }
         return new ArrayList<>(0);
     }
 
