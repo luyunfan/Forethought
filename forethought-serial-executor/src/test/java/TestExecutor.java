@@ -5,7 +5,10 @@ import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.type.Tuple;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 public class TestExecutor {
 
@@ -24,6 +27,8 @@ public class TestExecutor {
 
                 .sort()
                 .drop(1).forEach(System.out::println);
+
+        int i = factory.from(new Integer[]{2, 1, 3, 4, 5}).reduce((a, b) -> a + b);
 
         //.foreach(System.out::println);
         System.out.println();

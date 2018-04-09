@@ -197,6 +197,29 @@ class TransformationProcessor<R> {
                             } else {
                                 throw new UnsupportedOperationException("执行引擎发现除了PairMonad和CommonMonad以外的Monad，执行失败！");
                             }
+                        } else if (tuple.value() == TransformationalType.SHUFFLE) {
+
+                            if (!(tuple.key() instanceof PairMonad)) {
+                                throw new IllegalStateException("执行引擎接收到一个Shuffle操作但是被执行者不是PairMonad！");
+                            }
+                            ShuffleMonad shuffle = (ShuffleMonad) tuple.key();
+                            switch (shuffle.shuffleType()) {
+                                case JOIN:
+                                    JoinImpl join = (JoinImpl) shuffle;
+                                    break;
+                                case COMBINE:
+                                    CombineShuffleImpl combine = (CombineShuffleImpl) shuffle;
+
+                                    break;
+                                case SORTED:
+                                    SortedShuffleImpl sorted = (SortedShuffleImpl) shuffle;
+                                    break;
+                                case AGGREGATE:
+                                    AggregateShuffleImpl aggregate = (AggregateShuffleImpl) shuffle;
+                                    break;
+                            }
+                        } else {
+                            throw new UnsupportedOperationException("执行引擎发现除了未知的Transformation操作，执行失败！");
                         }
                     }
                     return data;
@@ -265,8 +288,9 @@ class TransformationProcessor<R> {
                 ReduceImpl reduce = (ReduceImpl) action;
                 Object now = null;
                 Object next = resultIterator.next();
-                Object next2 = resultIterator.next();
+                Object next2;
                 while (resultIterator.hasNext()) {
+                    next2 = resultIterator.next();
                     if (now == null) {
                         now = next;
                     }
@@ -275,7 +299,6 @@ class TransformationProcessor<R> {
                     } else {
                         return (R) now;
                     }
-                    next2 = resultIterator.next();
                 }
                 return (R) now;
             } else if (actionType == ActionType.DROP) {
