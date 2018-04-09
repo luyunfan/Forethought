@@ -21,7 +21,7 @@ public class MonadTest {
         CommonMonad<Integer> monad = factory.from(testArray);
         monad.filter(i -> i == 5)
                 .distinct()
-                .mapToPair(item -> new Tuple<>(item, 1))
+                .mapToPair(item -> new Tuple<>(item + "A", 1))
                 .reduceByKey((a, b) -> a + b)
                 .createDAG()
                 .forEachByDFS(System.out::println);

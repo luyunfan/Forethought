@@ -36,8 +36,14 @@ class TransformationProcessor<R> {
      */
     private final ActionType actionType;
 
+    /**
+     * 是否进行排序
+     */
     private boolean isSorted = false;
 
+    /**
+     * 排序的Comparator对象
+     */
     private Comparator order = null;
 
     /**
@@ -88,16 +94,42 @@ class TransformationProcessor<R> {
         try {
             Iterator<?>[] iterator = {new Iterator<Object>() {
 
+                /**
+                 * flatMap多出的元素
+                 */
                 Queue<Object> pairFlatMapIterators = new LinkedList<>();
 
+                /**
+                 * Union多出的元素
+                 */
                 Queue<Object> commonFlatMapIterators = new LinkedList<>();
 
+                /**
+                 * reduce shuffle操作的执行端
+                 */
+                HashMap aggregateMap = new HashMap();
+
+                /**
+                 * flatMap的位置
+                 */
                 private int flatMapPos = -1;
+
+                /**
+                 * union的位置
+                 */
                 private int unionPos = -1;
+
+                /**
+                 * reduceByKey操作的完成需要迭代次数
+                 */
+                private int aggregateDoneNum = 1;
 
                 @Override
                 public boolean hasNext() {
-                    return dataSource.hasNext() || !pairFlatMapIterators.isEmpty() || !commonFlatMapIterators.isEmpty();
+                    return dataSource.hasNext() ||
+                            !pairFlatMapIterators.isEmpty() ||
+                            !commonFlatMapIterators.isEmpty() ||
+                            !(aggregateDoneNum <= 0);
                 }
 
                 @Override
@@ -105,11 +137,12 @@ class TransformationProcessor<R> {
                     Object data = null;
                     if (dataSource.hasNext()) {
                         data = dataSource.next();
-                    } else if (pairFlatMapIterators.isEmpty() && commonFlatMapIterators.isEmpty()) {
+                    } else if (pairFlatMapIterators.isEmpty() && commonFlatMapIterators.isEmpty() && aggregateMap.isEmpty()) {
                         throw new NoSuchElementException("迭代器已经没有元素了，不能执行next()！");
                     }
                     for (int index = 0; index < transformations.size(); index++) {
                         Tuple<Transformation, TransformationalType> tuple = transformations.get(index);
+
                         if (tuple.value() == TransformationalType.FILTER) { //filter操作
                             if (data == null) { //这时数据来自flatMap和Union
                                 if (index < flatMapPos || index < unionPos) {
@@ -159,7 +192,11 @@ class TransformationProcessor<R> {
                             if (tuple.key() instanceof PairMonad) {
                                 MapImpl map = (MapImpl) tuple.key();
                                 Function function = map.getTransformationalFunction();
-                                data = function.apply(data);
+                                if (data != null) {
+                                    data = function.apply(data);
+                                } else { //null的情况是reduceByKey引发的
+                                    data = new Tuple<>(null, null);
+                                }
                             } else if (tuple.key() instanceof CommonMonad) {
                                 com.yunfan.forethought.api.impls.transformation.common.MapImpl map =
                                         (com.yunfan.forethought.api.impls.transformation.common.MapImpl) tuple.key();
@@ -203,6 +240,8 @@ class TransformationProcessor<R> {
                                 throw new IllegalStateException("执行引擎接收到一个Shuffle操作但是被执行者不是PairMonad！");
                             }
                             ShuffleMonad shuffle = (ShuffleMonad) tuple.key();
+                            Tuple pairData = (Tuple) data;
+                            assert pairData != null;
                             switch (shuffle.shuffleType()) {
                                 case JOIN:
                                     JoinImpl join = (JoinImpl) shuffle;
@@ -216,11 +255,30 @@ class TransformationProcessor<R> {
                                     break;
                                 case AGGREGATE:
                                     AggregateShuffleImpl aggregate = (AggregateShuffleImpl) shuffle;
-                                    break;
+                                    Object agg = aggregateMap.get(pairData.key());
+                                    if (pairData.key() == null) { //代表没有元素了
+                                        aggregateDoneNum = aggregateMap.size();
+                                    } else {
+                                        if (agg == null) { //第一次进入
+                                            aggregateMap.put(pairData.key(), pairData.value());
+                                            return null;
+                                        } else { //不是第一次进入的元素
+                                            aggregateMap.put(pairData.key(), aggregate.getTransformationalFunction().apply(agg, pairData.value()));
+                                            return null;
+                                        }
+                                    }
+
                             }
                         } else {
                             throw new UnsupportedOperationException("执行引擎发现除了未知的Transformation操作，执行失败！");
                         }
+                    }
+                    if (data instanceof Tuple && ((Tuple) data).key() == null) { //说明只有reduceByKey的操作没有生效
+                        Set<Map.Entry> entrySet = aggregateMap.entrySet(); //这里是reduceByKey的实际逻辑
+                        Map.Entry entry = entrySet.iterator().next();
+                        data = new Tuple<>(entry.getKey(), entry.getValue());
+                        aggregateMap.remove(entry.getKey());
+                        aggregateDoneNum = aggregateMap.size();
                     }
                     return data;
                 }
