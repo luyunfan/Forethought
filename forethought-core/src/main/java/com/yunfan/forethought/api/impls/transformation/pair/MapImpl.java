@@ -46,7 +46,7 @@ public class MapImpl<IN, K2, V2> extends PairMonadImpl<K2, V2> implements Transf
      * @return 中间转换操作函数对象
      */
     @Override
-    protected Function<? super IN, ? extends Tuple<K2, V2>> getTransformationalFunction() {
+    public Function<? super IN, ? extends Tuple<K2, V2>> getTransformationalFunction() {
         return mapFunc;
     }
 

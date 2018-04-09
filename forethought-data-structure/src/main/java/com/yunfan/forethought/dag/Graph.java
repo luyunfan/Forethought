@@ -88,6 +88,7 @@ public class Graph<T> {
      * @param toVertex   第二个顶点
      */
     private void addDirectedEdge(Vertex<T> fromVertex, Vertex<T> toVertex) {
+        toVertex.addInDegree();
         if (fromVertex.getFirstEdge() == null) {
             fromVertex.setFirstEdge(new Node<>(toVertex));
         } else {
@@ -223,6 +224,34 @@ public class Graph<T> {
         Collections.copy(temp, items);
         Collections.reverse(temp);
         temp.forEach(vertex -> consumer.accept(vertex.getData()));
+    }
+
+    public List<T> topologicalSort() {
+        List<T> result = new LinkedList<>();
+        int count = 0;//判断是否所有的顶点都出队了,若有顶点未入队(组成环的顶点)，则这些顶点肯定不会出队
+        Queue<Vertex<T>> queue = new LinkedList<>();// 拓扑排序中用到的栈,也可用队列.
+        //扫描所有的顶点,将入度为0的顶点入队列
+        for (Vertex<T> vertex : items) {
+            if (vertex.getInDegree() == 0) {
+                queue.add(vertex); //度为0的顶点出队列并且更新它的邻接点的入度
+            }
+        }
+        while (!queue.isEmpty()) {
+            Vertex<T> vertex = queue.remove();
+            result.add(vertex.getData());
+            count++;
+            if (count == items.size()) {
+                break;
+            }
+            Node<T> first = vertex.getFirstEdge();
+            while (first != null) {
+                if ((first.getAdjVertex().getInDegree() - 1) == 0) {
+                    queue.add(first.getAdjVertex());
+                }
+                first = first.getAdjVertex().getFirstEdge();
+            }
+        }
+        return result;
     }
 
     /**

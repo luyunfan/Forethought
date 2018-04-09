@@ -5,6 +5,8 @@ import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.type.Tuple;
 import org.junit.Test;
 
+import java.util.Iterator;
+
 public class TestExecutor {
 
     @Test
@@ -12,14 +14,18 @@ public class TestExecutor {
 
         MonadFactory factory = MonadFactory.createMonadFactory();
 
-        CommonMonad<Integer> monad = factory.from(new Integer[]{1, 2, 3, 4, 5});
-        Graph<Monad<?>> dag = monad.filter(i -> i == 5)
-                .distinct()
+        CommonMonad<Integer> monad = factory.from(new Integer[]{2, 1, 3, 4, 5});
+        monad.filter(i -> i < 4)
+                //.distinct()
                 .union(factory.from(new Integer[]{6, 7, 8, 9, 10}))
-                .mapToPair(item -> new Tuple<>(item, 1))
-                .reduceByKey((a, b) -> a + b)
-                .createDAG();
+                //.mapToPair(item -> new Tuple<>(item, 1))
+                //.reduceByKey((a, b) -> a + b)
+                //.map(i -> i + "")
 
+                .sort()
+                .drop(1).forEach(System.out::println);
+
+        //.foreach(System.out::println);
         System.out.println();
     }
 }

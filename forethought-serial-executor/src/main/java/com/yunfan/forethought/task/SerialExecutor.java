@@ -6,7 +6,6 @@ import com.yunfan.forethought.api.task.Executor;
 import com.yunfan.forethought.dag.Graph;
 import com.yunfan.forethought.enums.ExecutorType;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,11 +31,10 @@ public class SerialExecutor implements Executor {
      */
     @Override
     public <R, F> R execute(Graph<Monad<?>> dag, Action<R, F> action) {
-        List<Monad<?>> vertexes = dag.getVertexes();
-        Collections.reverse(vertexes);
+        List<Monad<?>> vertexes = dag.topologicalSort();
         TaskQueue<R> taskQueue = null;
         for (Monad<?> item : vertexes) {
-            if (item.getFatherDependency() == null && item.isDataSource() && item.getDataSource().isPresent()) {
+            if ((!item.getFatherDependency().isPresent()) && item.isDataSource() && item.getDataSource().isPresent()) {
                 taskQueue = new TaskQueue<>(item.getDataSource().get(), action);
             } else if (item.getFatherDependency() != null && taskQueue != null) { //添加中间转换操作
                 taskQueue.addTask(item);

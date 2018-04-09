@@ -62,7 +62,7 @@ public class CombineShuffleImpl<K, V> extends ShuffleMonad<K, Collection<V>> {
      * @return 中间转换操作函数对象
      */
     @Override
-    protected Tuple<BiFunction<Collection<V>, V, Collection<V>>, Consumer<Collection<V>>> getTransformationalFunction() {
+    public Tuple<BiFunction<Collection<V>, V, Collection<V>>, Consumer<Collection<V>>> getTransformationalFunction() {
         return new Tuple<>(combineFunc, collectionCreator);
     }
 

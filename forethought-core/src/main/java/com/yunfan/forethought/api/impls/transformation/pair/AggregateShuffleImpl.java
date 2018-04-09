@@ -51,7 +51,7 @@ public class AggregateShuffleImpl<K, V> extends ShuffleMonad<K, V> {
      * @return 中间转换操作函数对象
      */
     @Override
-    protected BiFunction<V, V, V> getTransformationalFunction() {
+    public BiFunction<V, V, V> getTransformationalFunction() {
         return aggregateFunc;
     }
 

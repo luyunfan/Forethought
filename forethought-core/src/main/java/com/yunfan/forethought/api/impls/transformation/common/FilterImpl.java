@@ -43,7 +43,7 @@ public class FilterImpl<T> extends CommonMonadImpl<T> implements Transformation 
      * @return 中间转换操作函数对象
      */
     @Override
-    protected Predicate<? super T> getTransformationalFunction() {
+    public Predicate<? super T> getTransformationalFunction() {
         return filterFunc;
     }
 

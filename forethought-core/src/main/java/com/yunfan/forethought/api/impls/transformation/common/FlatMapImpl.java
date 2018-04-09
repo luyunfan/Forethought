@@ -44,7 +44,7 @@ public class FlatMapImpl<IN, OUT> extends CommonMonadImpl<OUT> implements Transf
      * @return 中间转换操作函数对象
      */
     @Override
-    protected Function<? super IN, ? extends Monad<? extends OUT>> getTransformationalFunction() {
+    public Function<? super IN, ? extends Monad<? extends OUT>> getTransformationalFunction() {
         return mapFunc;
     }
 

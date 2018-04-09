@@ -45,7 +45,7 @@ public class FlatMapImpl<IN, K, V> extends PairMonadImpl<K, V> implements Transf
      * @return 中间转换操作函数对象
      */
     @Override
-    protected Function<? super IN, ? extends PairMonad<? extends K, ? extends V>> getTransformationalFunction() {
+    public Function<? super IN, ? extends PairMonad<? extends K, ? extends V>> getTransformationalFunction() {
         return mapFunc;
     }
 

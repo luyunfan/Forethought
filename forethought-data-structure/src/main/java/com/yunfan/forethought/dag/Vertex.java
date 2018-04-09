@@ -27,6 +27,11 @@ class Vertex<T> {
     private boolean visited;
 
     /**
+     * 入度
+     */
+    private int inDegree = 0;
+
+    /**
      * 获取邻接点链表头指针
      *
      * @return 邻接点链表头指针
@@ -69,5 +74,19 @@ class Vertex<T> {
      */
     public T getData() {
         return data;
+    }
+
+    /**
+     * @return 顶点的入度
+     */
+    public int getInDegree() {
+        return inDegree;
+    }
+
+    /**
+     * 对顶点入度加一
+     */
+    public void addInDegree() {
+        inDegree++;
     }
 }

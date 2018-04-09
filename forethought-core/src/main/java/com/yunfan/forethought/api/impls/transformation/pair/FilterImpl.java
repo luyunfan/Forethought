@@ -45,7 +45,7 @@ public class FilterImpl<K, V> extends PairMonadImpl<K, V> implements Transformat
      * @return 中间转换操作函数对象
      */
     @Override
-    protected Predicate<? super Tuple<K, V>> getTransformationalFunction() {
+    public Predicate<? super Tuple<K, V>> getTransformationalFunction() {
         return filterFunc;
     }
 
