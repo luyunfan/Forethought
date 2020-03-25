@@ -85,7 +85,7 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
     }
 
     @Override
-    public List<T> drop(int dropNum) {
+    public List<T> drop(long dropNum) {
         if (dropNum < 0) {
             throw new IllegalArgumentException("drop函数的参数不能小于0");
         }
@@ -98,7 +98,7 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
     }
 
     @Override
-    public List<T> dropRight(int dropNum) {
+    public List<T> dropRight(long dropNum) {
         if (dropNum < 0) {
             throw new IllegalArgumentException("drop函数的参数不能小于0");
         }

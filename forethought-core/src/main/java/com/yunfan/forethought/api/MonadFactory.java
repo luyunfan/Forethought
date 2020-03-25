@@ -77,10 +77,10 @@ public class MonadFactory {
      * @param <T>   数组中元素的数据类型
      * @return 包含数组内容的Monad
      */
-    public <T> CommonMonad<T> from(@NotNull T[] array) {
+    @SafeVarargs
+    public final <T> CommonMonad<T> from(@NotNull T... array) {
         MemoryRepeatableIterator<T> iterator = new MemoryRepeatableIterator<>(Arrays.asList(array).iterator(), true);
         return new CommonMonadImpl<>(iterator);
-
     }
 
     /**
@@ -141,7 +141,10 @@ public class MonadFactory {
         Scanner scanner = new Scanner(new FileInputStream(fileName), charset.name()).useDelimiter(split);
         Function<InputStream, String> creator = source -> {
             try {
-                return scanner.next();
+                String result = scanner.next();
+                if (result.equals("\n"))
+                    result = scanner.next();
+                return result;
             } catch (NoSuchElementException e) {
                 return null; //没有了返回null，迭代器就会停止下一次迭代
             }

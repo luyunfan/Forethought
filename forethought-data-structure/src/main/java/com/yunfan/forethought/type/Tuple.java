@@ -1,6 +1,6 @@
 package com.yunfan.forethought.type;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 元组类型，代表Key Value键值对
@@ -78,7 +78,7 @@ public class Tuple<K, V> {
      */
     @Override
     public String toString() {
-        return "(" + key + "," + value + ")";
+        return "(" + key + ", " + value + ")";
     }
 
     /**

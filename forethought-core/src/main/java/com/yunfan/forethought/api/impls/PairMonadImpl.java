@@ -103,7 +103,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     @Override
     public PairMonad<K, Long> countByKey() {
         return this.map(tuple -> new Tuple<>(tuple.key(), 1L))
-                .reduceByKey((x, y) -> x + y);
+                .reduceByKey(Long::sum);
     }
 
     /**
@@ -197,15 +197,12 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
     @SuppressWarnings("unchecked") //Java API的类型返回Object，没有类型安全问题
     @Override
     public Tuple<K, V>[] toArray() {
-        long length = count();
-        if (length != (int) length)
-            throw new UnsupportedOperationException("toArray()调用必须保证Monad元素数量在32位整数范围之内！数组不能容纳更多的元素");
-        Tuple<K, V>[] result = (Tuple[]) Array.newInstance(Tuple.class, (int) length);
+        List<Tuple<K, V>> result = new ArrayList<>();
         Iterator<Tuple<K, V>> iterator = toIterator();
-        for (int index = 0; index < length; index++) {
-            result[index] = iterator.next();
+        while (iterator.hasNext()) {
+            result.add(iterator.next());
         }
-        return result;
+        return result.toArray(new Tuple[0]);
     }
 
     /**
@@ -305,7 +302,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public List<Tuple<K, V>> drop(int dropNum) {
+    public List<Tuple<K, V>> drop(long dropNum) {
         if (dropNum < 0) {
             throw new IllegalArgumentException("drop函数的参数不能小于0");
         }
@@ -329,7 +326,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public List<Tuple<K, V>> dropRight(int dropNum) {
+    public List<Tuple<K, V>> dropRight(long dropNum) {
         if (dropNum < 0) {
             throw new IllegalArgumentException("drop函数的参数不能小于0");
         }

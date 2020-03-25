@@ -143,7 +143,7 @@ public interface Monad<T> {
             } catch (IllegalArgumentException ignored) { //插入重复顶点是插入了father的顶点，忽略掉
             }
             if (temp.getFatherDependency().isPresent()) { //还有上层依赖
-                Monad father = ((Dependency<?>) temp.getFatherDependency().get()).get();
+                Monad<?> father = ((Dependency<?>) temp.getFatherDependency().get()).get();
                 try {
                     result.addVertex(father);
                 } catch (IllegalArgumentException ignored) { //插入重复顶点是插入了father的顶点，忽略掉

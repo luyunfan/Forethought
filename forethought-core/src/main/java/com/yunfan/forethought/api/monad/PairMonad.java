@@ -135,7 +135,7 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    List<Tuple<K, V>> drop(int dropNum);
+    List<Tuple<K, V>> drop(long dropNum);
 
     /**
      * 从集合末端取出一个元素组成集合
@@ -150,7 +150,7 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    List<Tuple<K, V>> dropRight(int dropNum);
+    List<Tuple<K, V>> dropRight(long dropNum);
 
     /**
      * 对其它Key相同的PairMonad执行内连接操作，得到连接后的PairMonad对象

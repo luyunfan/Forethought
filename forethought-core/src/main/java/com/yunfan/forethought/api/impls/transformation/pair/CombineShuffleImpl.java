@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * 代表Combine的Shuffle操作
@@ -25,7 +26,7 @@ public class CombineShuffleImpl<K, V> extends ShuffleMonad<K, Collection<V>> {
     /**
      * 创建Collection的函数
      */
-    private final Consumer<Collection<V>> collectionCreator;
+    private final Supplier<Collection<V>> collectionCreator;
 
     /**
      * 上层依赖对象
@@ -41,7 +42,7 @@ public class CombineShuffleImpl<K, V> extends ShuffleMonad<K, Collection<V>> {
      */
     public CombineShuffleImpl(@NotNull Dependency<?> father,
                               @NotNull BiFunction<Collection<V>, V, Collection<V>> combineFunc,
-                              @NotNull Consumer<Collection<V>> collectionCreator) {
+                              @NotNull Supplier<Collection<V>> collectionCreator) {
         super(father);
         this.father = father;
         this.combineFunc = combineFunc;
@@ -62,7 +63,7 @@ public class CombineShuffleImpl<K, V> extends ShuffleMonad<K, Collection<V>> {
      * @return 中间转换操作函数对象
      */
     @Override
-    public Tuple<BiFunction<Collection<V>, V, Collection<V>>, Consumer<Collection<V>>> getTransformationalFunction() {
+    public Tuple<BiFunction<Collection<V>, V, Collection<V>>, Supplier<Collection<V>>> getTransformationalFunction() {
         return new Tuple<>(combineFunc, collectionCreator);
     }
 

@@ -34,9 +34,11 @@ public class SerialExecutor implements Executor {
         List<Monad<?>> vertexes = dag.topologicalSort();
         TaskQueue<R> taskQueue = null;
         for (Monad<?> item : vertexes) {
-            if ((!item.getFatherDependency().isPresent()) && item.isDataSource() && item.getDataSource().isPresent()) {
+            if ((!item.getFatherDependency().isPresent()) &&
+                    item.isDataSource() && item.getDataSource().isPresent()
+            ) {
                 taskQueue = new TaskQueue<>(item.getDataSource().get(), action);
-            } else if (item.getFatherDependency() != null && taskQueue != null) { //添加中间转换操作
+            } else if (item.getFatherDependency().isPresent() && taskQueue != null) { //添加中间转换操作
                 taskQueue.addTask(item);
             } else {
                 throw new IllegalStateException("Monad既不是数据源，也没有上层依赖，执行引擎无法执行！");

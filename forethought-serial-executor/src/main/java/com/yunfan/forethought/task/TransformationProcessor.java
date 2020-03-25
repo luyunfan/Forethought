@@ -2,16 +2,19 @@ package com.yunfan.forethought.task;
 
 import com.yunfan.forethought.api.impls.action.*;
 import com.yunfan.forethought.api.impls.transformation.Transformation;
-import com.yunfan.forethought.api.impls.transformation.pair.*;
+import com.yunfan.forethought.api.impls.transformation.common.*;
+import com.yunfan.forethought.api.impls.transformation.pair.AggregateShuffleImpl;
+import com.yunfan.forethought.api.impls.transformation.pair.CombineShuffleImpl;
+import com.yunfan.forethought.api.impls.transformation.pair.JoinImpl;
+import com.yunfan.forethought.api.impls.transformation.pair.SortedShuffleImpl;
 import com.yunfan.forethought.api.monad.CommonMonad;
 import com.yunfan.forethought.api.monad.PairMonad;
 import com.yunfan.forethought.enums.ActionType;
-import com.yunfan.forethought.enums.TransformationalType;
 import com.yunfan.forethought.iterators.RepeatableIterator;
 import com.yunfan.forethought.type.Tuple;
 
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 /**
@@ -24,7 +27,7 @@ class TransformationProcessor<R> {
     /**
      * 保存转换操作的列表
      */
-    private final List<Tuple<Transformation, TransformationalType>> transformations = new LinkedList<>();
+    private final List<Transformation> transformations = new LinkedList<>();
 
     /**
      * Action操作对象
@@ -36,15 +39,14 @@ class TransformationProcessor<R> {
      */
     private final ActionType actionType;
 
-    /**
-     * 是否进行排序
-     */
-    private boolean isSorted = false;
+    @SuppressWarnings("rawtypes")
+    private List memoryCache = new LinkedList();
 
-    /**
-     * 排序的Comparator对象
-     */
-    private Comparator order = null;
+    @SuppressWarnings("rawtypes")
+    private List memoryCacheTemp = new LinkedList();
+
+    //@SuppressWarnings("rawtypes")
+    private Map<Object, Object> shuffleMap = new HashMap<>();
 
     /**
      * 构造方法，需要传入最终的Action操作
@@ -62,24 +64,7 @@ class TransformationProcessor<R> {
      * @param transformation 需要添加的Transformation操作
      */
     void add(Transformation transformation) {
-        Tuple<Transformation, TransformationalType> tuple = new Tuple<>(transformation, transformation.type());
-        if (tuple.value() == TransformationalType.SORT) { //sort操作
-            if (tuple.key() instanceof PairMonad) {
-                SortImpl sort = (SortImpl) tuple.key();
-                order = sort.getSortRule();
-                isSorted = true;
-            } else if (tuple.key() instanceof CommonMonad) {
-                com.yunfan.forethought.api.impls.transformation.common.SortImpl sort =
-                        (com.yunfan.forethought.api.impls.transformation.common.SortImpl) tuple.key();
-                if (sort.getSortRule().isPresent()) { //存在自定义Comparator
-                    order = (Comparator) sort.getSortRule().get();
-                }
-                isSorted = true;
-            } else {
-                throw new UnsupportedOperationException("执行引擎发现除了PairMonad和CommonMonad以外的Monad，执行失败！");
-            }
-        }
-        transformations.add(tuple);
+        transformations.add(transformation);
     }
 
     /**
@@ -88,346 +73,234 @@ class TransformationProcessor<R> {
      * @param dataSource 数据源迭代器
      * @return 最终结果
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     //因为在DAG端实际类型约束就丢失了，所以类型安全必须用程序逻辑来保证
     R process(RepeatableIterator<?> dataSource) {
-        try {
-            Iterator<?>[] iterator = {new Iterator<Object>() {
-
-                /**
-                 * flatMap多出的元素
-                 */
-                Queue<Object> pairFlatMapIterators = new LinkedList<>();
-
-                /**
-                 * Union多出的元素
-                 */
-                Queue<Object> commonFlatMapIterators = new LinkedList<>();
-
-                /**
-                 * reduce shuffle操作的执行端
-                 */
-                HashMap aggregateMap = new HashMap();
-
-                /**
-                 * flatMap的位置
-                 */
-                private int flatMapPos = -1;
-
-                /**
-                 * union的位置
-                 */
-                private int unionPos = -1;
-
-                /**
-                 * reduceByKey操作的完成需要迭代次数
-                 */
-                private int aggregateDoneNum = 1;
-
-                @Override
-                public boolean hasNext() {
-                    return dataSource.hasNext() ||
-                            !pairFlatMapIterators.isEmpty() ||
-                            !commonFlatMapIterators.isEmpty() ||
-                            !(aggregateDoneNum <= 0);
-                }
-
-                @Override
-                public Object next() {
-                    Object data = null;
-                    if (dataSource.hasNext()) {
-                        data = dataSource.next();
-                    } else if (pairFlatMapIterators.isEmpty() && commonFlatMapIterators.isEmpty() && aggregateMap.isEmpty()) {
-                        throw new NoSuchElementException("迭代器已经没有元素了，不能执行next()！");
-                    }
-                    for (int index = 0; index < transformations.size(); index++) {
-                        Tuple<Transformation, TransformationalType> tuple = transformations.get(index);
-
-                        if (tuple.value() == TransformationalType.FILTER) { //filter操作
-                            if (data == null) { //这时数据来自flatMap和Union
-                                if (index < flatMapPos || index < unionPos) {
-                                    data = !pairFlatMapIterators.isEmpty() ?
-                                            pairFlatMapIterators.remove() : commonFlatMapIterators.remove();
-                                    continue;
-                                }
-                            }
-                            if (tuple.key() instanceof PairMonad) {
-                                FilterImpl filter = (FilterImpl) tuple.key();
-                                Predicate predicate = filter.getTransformationalFunction();
-                                if (!predicate.test(data)) {
-                                    return null; //如果不符合过滤条件，直接过滤掉
-                                }
-                            } else if (tuple.key() instanceof CommonMonad) {
-                                com.yunfan.forethought.api.impls.transformation.common.FilterImpl filter =
-                                        (com.yunfan.forethought.api.impls.transformation.common.FilterImpl) tuple.key();
-                                Predicate predicate = filter.getTransformationalFunction();
-                                if (!predicate.test(data)) {
-                                    return null; //如果不符合过滤条件，直接过滤掉
-                                }
-                            } else {
-                                throw new UnsupportedOperationException("执行引擎发现除了PairMonad和CommonMonad以外的Monad，执行失败！");
-                            }
-                        } else if (tuple.value() == TransformationalType.FLATMAP) { //flatMap操作
-                            flatMapPos = index;
-                            if (tuple.key() instanceof PairMonad) {
-                                FlatMapImpl flatMap = (FlatMapImpl) tuple.key();
-                                Function function = flatMap.getTransformationalFunction();
-                                PairMonad pair = (PairMonad) function.apply(data);
-                                pair.toIterator().forEachRemaining(pairFlatMapIterators::add);
-                            } else if (tuple.key() instanceof CommonMonad) {
-                                com.yunfan.forethought.api.impls.transformation.common.FlatMapImpl flatMap =
-                                        (com.yunfan.forethought.api.impls.transformation.common.FlatMapImpl) tuple.key();
-                                CommonMonad common = (CommonMonad) flatMap.getTransformationalFunction().apply(data);
-                                common.toIterator().forEachRemaining(commonFlatMapIterators::add);
-                            } else {
-                                throw new UnsupportedOperationException("执行引擎发现除了PairMonad和CommonMonad以外的Monad，执行失败！");
-                            }
-                        } else if (tuple.value() == TransformationalType.MAP) { //map操作
-                            if (data == null) { //这时数据来自flatMap和Union
-                                if (index < Math.min(flatMapPos, unionPos)) {
-                                    data = !pairFlatMapIterators.isEmpty() ?
-                                            pairFlatMapIterators.remove() : commonFlatMapIterators.remove();
-                                }
-                            }
-                            if (tuple.key() instanceof PairMonad) {
-                                MapImpl map = (MapImpl) tuple.key();
-                                Function function = map.getTransformationalFunction();
-                                if (data != null) {
-                                    data = function.apply(data);
-                                } else { //null的情况是reduceByKey引发的
-                                    data = new Tuple<>(null, null);
-                                }
-                            } else if (tuple.key() instanceof CommonMonad) {
-                                com.yunfan.forethought.api.impls.transformation.common.MapImpl map =
-                                        (com.yunfan.forethought.api.impls.transformation.common.MapImpl) tuple.key();
-                                Function function = map.getTransformationalFunction();
-                                data = function.apply(data);
-                            } else {
-                                throw new UnsupportedOperationException("执行引擎发现除了PairMonad和CommonMonad以外的Monad，执行失败！");
-                            }
-                        } else if (tuple.value() == TransformationalType.SORT) { //sort操作
-                            if (tuple.key() instanceof CommonMonad) {
-                                com.yunfan.forethought.api.impls.transformation.common.SortImpl sort =
-                                        (com.yunfan.forethought.api.impls.transformation.common.SortImpl) tuple.key();
-                                if (sort.getSortRule().isPresent()) { //存在自定义Comparator
-                                    order = (Comparator) sort.getSortRule().get();
-                                } else {
-                                    if (!(data instanceof Comparable)) {
-                                        throw new IllegalArgumentException("需要排序的对象不是Comparable对象！");
-                                    }
-                                }
-                                isSorted = true;
-                            } else {
-                                throw new UnsupportedOperationException("执行引擎发现除了PairMonad和CommonMonad以外的Monad，执行失败！");
-                            }
-                        } else if (tuple.value() == TransformationalType.UNION) { //union操作
-                            unionPos = index;
-                            if (tuple.key() instanceof PairMonad) {
-                                UnionImpl union = (UnionImpl) tuple.key();
-                                PairMonad pair = union.other();
-                                pair.toIterator().forEachRemaining(pairFlatMapIterators::add);
-                            } else if (tuple.key() instanceof CommonMonad) {
-                                com.yunfan.forethought.api.impls.transformation.common.UnionImpl union =
-                                        (com.yunfan.forethought.api.impls.transformation.common.UnionImpl) tuple.key();
-                                CommonMonad common = union.other();
-                                common.toIterator().forEachRemaining(commonFlatMapIterators::add);
-                            } else {
-                                throw new UnsupportedOperationException("执行引擎发现除了PairMonad和CommonMonad以外的Monad，执行失败！");
-                            }
-                        } else if (tuple.value() == TransformationalType.SHUFFLE) {
-
-                            if (!(tuple.key() instanceof PairMonad)) {
-                                throw new IllegalStateException("执行引擎接收到一个Shuffle操作但是被执行者不是PairMonad！");
-                            }
-                            ShuffleMonad shuffle = (ShuffleMonad) tuple.key();
-                            Tuple pairData = (Tuple) data;
-                            assert pairData != null;
-                            switch (shuffle.shuffleType()) {
-                                case JOIN:
-                                    JoinImpl join = (JoinImpl) shuffle;
-                                    break;
-                                case COMBINE:
-                                    CombineShuffleImpl combine = (CombineShuffleImpl) shuffle;
-
-                                    break;
-                                case SORTED:
-                                    SortedShuffleImpl sorted = (SortedShuffleImpl) shuffle;
-                                    break;
-                                case AGGREGATE:
-                                    AggregateShuffleImpl aggregate = (AggregateShuffleImpl) shuffle;
-                                    Object agg = aggregateMap.get(pairData.key());
-                                    if (pairData.key() == null) { //代表没有元素了
-                                        aggregateDoneNum = aggregateMap.size();
-                                    } else {
-                                        if (agg == null) { //第一次进入
-                                            aggregateMap.put(pairData.key(), pairData.value());
-                                            return null;
-                                        } else { //不是第一次进入的元素
-                                            aggregateMap.put(pairData.key(), aggregate.getTransformationalFunction().apply(agg, pairData.value()));
-                                            return null;
-                                        }
-                                    }
-
-                            }
-                        } else {
-                            throw new UnsupportedOperationException("执行引擎发现除了未知的Transformation操作，执行失败！");
-                        }
-                    }
-                    if (data instanceof Tuple && ((Tuple) data).key() == null) { //说明只有reduceByKey的操作没有生效
-                        Set<Map.Entry> entrySet = aggregateMap.entrySet(); //这里是reduceByKey的实际逻辑
-                        Map.Entry entry = entrySet.iterator().next();
-                        data = new Tuple<>(entry.getKey(), entry.getValue());
-                        aggregateMap.remove(entry.getKey());
-                        aggregateDoneNum = aggregateMap.size();
-                    }
-                    return data;
-                }
-            }};
-
-            Iterator<Object> resultIterator = new Iterator<Object>() {
-
-                private Object now = null;
-                private boolean nowDefined = false;
-
-                @Override
-                public boolean hasNext() {
-                    if (nowDefined) {
-                        return true;
-                    }
-                    do {
-                        if (!iterator[0].hasNext()) {
-                            return false;
-                        }
-                        now = iterator[0].next();
-                    } while (now == null);
-                    nowDefined = true;
-                    return true;
-                }
-
-                @Override
-                public Object next() {
-                    if (hasNext()) {
-                        nowDefined = false;
-                        return now;
-                    } else {
-                        throw new NoSuchElementException("迭代器不能再迭代了！");
+        loadData(dataSource);
+        for (Transformation task : transformations) {
+            if (task instanceof FilterImpl) {
+                for (Object item : memoryCache) {
+                    if (((FilterImpl) task)
+                            .getTransformationalFunction().test(item)) {
+                        memoryCacheTemp.add(item);
                     }
                 }
-            };
-            if (isSorted) {
-                resultIterator = sortIterator(resultIterator, order);
+                memoryCache = memoryCacheTemp;
+                memoryCacheTemp = new LinkedList();
+            } else if (task instanceof com.yunfan.forethought.
+                    api.impls.transformation.pair.FilterImpl) {
+                for (Object item : memoryCache) {
+                    Predicate func = ((com.yunfan.forethought.
+                            api.impls.transformation.pair.FilterImpl) task)
+                            .getTransformationalFunction();
+                    if (func.test(item)) {
+                        memoryCacheTemp.add(item);
+                    }
+                }
+                memoryCache = memoryCacheTemp;
+                memoryCacheTemp = new LinkedList();
+            } else if (task instanceof MapImpl) {
+                for (Object item : memoryCache) {
+                    memoryCacheTemp.add(
+                            ((MapImpl) task)
+                                    .getTransformationalFunction().apply(item)
+                    );
+                }
+                memoryCache = memoryCacheTemp;
+                memoryCacheTemp = new LinkedList<>();
+            } else if (task instanceof
+                    com.yunfan.forethought.api
+                            .impls.transformation.pair.MapImpl) {
+                for (Object item : memoryCache) {
+                    memoryCacheTemp.add(
+                            ((com.yunfan.forethought.api
+                                    .impls.transformation.pair.MapImpl) task)
+                                    .getTransformationalFunction().apply(item)
+                    );
+                }
+                memoryCache = memoryCacheTemp;
+                memoryCacheTemp = new LinkedList();
+            } else if (task instanceof SortImpl) {
+                Optional<Comparator> comparator = ((SortImpl) task).getSortRule();
+                if (comparator.isPresent()) {
+                    memoryCache.sort((Comparator<? super Object>) comparator.get());
+                } else {
+                    Collections.sort(memoryCache);
+                }
+            } else if (task instanceof com.yunfan.forethought
+                    .api.impls.transformation.pair.SortImpl) {
+                Comparator comparator = ((com.yunfan.forethought.api.impls.transformation.pair.SortImpl) task).getSortRule();
+                memoryCache.sort((Comparator<? super Object>) comparator);
+            } else if (task instanceof UnionImpl) {
+                ((UnionImpl) task).other()
+                        .foreach(memoryCache::add);
+            } else if (task instanceof com.yunfan.forethought.api.impls.transformation.pair.UnionImpl) {
+                ((com.yunfan.forethought.api.impls.
+                        transformation.pair.UnionImpl) task)
+                        .other()
+                        .foreach(memoryCache::add);
+            } else if (task instanceof FlatMapImpl) {
+                for (Object item : memoryCache) {
+                    ((CommonMonad) ((FlatMapImpl) task)
+                            .getTransformationalFunction()
+                            .apply(item)).foreach(memoryCacheTemp::add);
+                }
+                memoryCache = memoryCacheTemp;
+                memoryCacheTemp = new LinkedList();
+            } else if (task instanceof com.yunfan.forethought
+                    .api.impls.transformation.pair.FlatMapImpl) {
+                for (Object item : memoryCache) {
+                    ((PairMonad) ((com.yunfan.forethought.api.
+                            impls.transformation.pair.FlatMapImpl) task)
+                            .getTransformationalFunction()
+                            .apply(item)).foreach(memoryCacheTemp::add);
+                }
+                memoryCache = memoryCacheTemp;
+                memoryCacheTemp = new LinkedList();
+            } else if (task instanceof AggregateShuffleImpl) {
+
+                BiFunction func = ((AggregateShuffleImpl) task)
+                        .getTransformationalFunction();
+                doShuffle();
+                memoryCache.clear();
+                for (Map.Entry<Object, Object> shuffleTemp : shuffleMap.entrySet()) {
+                    List<Object> values = (List<Object>) shuffleTemp.getValue();
+                    Object first = values.get(0);
+                    for (Object value : values) {
+                        first = func.apply(first, value);
+                    }
+                    memoryCache.add(new Tuple<>(shuffleTemp.getKey(), first));
+                }
+            } else if (task instanceof CombineShuffleImpl) {
+                doShuffle();
+                memoryCache.clear();
+                for (Map.Entry<Object, Object> shuffleTemp : shuffleMap.entrySet()) {
+                    memoryCache.add(new Tuple<>(shuffleTemp.getKey(), shuffleTemp.getValue()));
+                }
+            } else if (task instanceof JoinImpl) {
+                doShuffle();
+                List<Tuple> otherPairs = ((JoinImpl) task).joinPair()
+                        .toList();
+                Map<Object, Tuple> resultMap = new HashMap<>();
+                for (Tuple otherPair : otherPairs) {
+                    Object key = otherPair.key();
+                    if (shuffleMap.containsKey(key)) {
+                        Object originalValue = shuffleMap.get(key);
+                        resultMap.put(key, new Tuple<>(originalValue, otherPair.value()));
+                    }
+                }
+                shuffleMap = (Map) resultMap;
+            } else if (task instanceof SortedShuffleImpl) {
+                doShuffle();
+                Object[] keyArray = shuffleMap.keySet().toArray();
+                Arrays.sort(keyArray);
+                memoryCache.clear();
+                for (Object key : keyArray) {
+                    Object value = shuffleMap.get(key);
+                    memoryCache.add(new Tuple<>(key, value));
+                }
+            } else {
+                throw new UnsupportedOperationException("执行引擎探测到未知的Transformation类型：" + task.getClass() + "，无法完成计算！");
             }
-            //Action操作逻辑
-            if (actionType == ActionType.COLLECT) { //Collect操作就返回迭代器
-                return (R) resultIterator;
-            } else if (actionType == ActionType.PREDICATE) { //Predicate操作返回Boolean值
+        }
+
+        //最后执行action操作
+        switch (actionType) {
+            case COLLECT:
+                return (R) memoryCache.iterator();
+            case DROP:
+                List dropResultList = new ArrayList();
+                DropImpl dropimpl = (DropImpl) action;
+                int size = memoryCache.size();
+                long dropNumber = dropimpl.dropNumber() > size ?
+                        size : dropimpl.dropNumber();
+                if (dropimpl.isStartWithLeft()) {
+                    for (Object item : memoryCache) {
+                        if (dropNumber > 0) {
+                            dropNumber--;
+                            continue;
+                        }
+                        dropResultList.add(item);
+                    }
+                } else {
+                    dropNumber -= size;
+                    for (Object item : memoryCache) {
+                        if (dropNumber == 0) {
+                            break;
+                        }
+                        dropResultList.add(item);
+                        dropNumber--;
+                    }
+                }
+                return (R) dropResultList;
+            case PREDICATE:
                 PredicateImpl predicate = (PredicateImpl) action;
                 boolean isAny = predicate.isAny();
-                Object next = resultIterator.next();
-                while (resultIterator.hasNext()) {
-                    if (isAny) { //是any的情况下，返回一个true就返回
-                        boolean test = predicate.actionFunc().test(next);
-                        if (test) {
+                for (Object item : memoryCache) {
+                    if (isAny) {
+                        if (predicate.actionFunc().test(item)) {
                             return (R) Boolean.TRUE;
                         }
-                    } else { //不是any的情况，必须全部为true
-                        boolean test = predicate.actionFunc().test(next);
-                        if (!test) { //如果有一个不成立就返回False
+                    } else {
+                        if (!predicate.actionFunc().test(item)) {
                             return (R) Boolean.FALSE;
                         }
                     }
                 }
-                if (isAny) { //any的情况下循环内没返回说明不存在任何一个为true
-                    return (R) Boolean.FALSE;
-                } else { //all的情况下循环内没返回说明全部都成立
+                if (isAny) {
+                    return (R) Boolean.FALSE;  //最后都没return，肯定是False
+                } else {
                     return (R) Boolean.TRUE;
                 }
-            } else if (actionType == ActionType.REDUCE) { //Reduce操作就互相累加
-                ReduceImpl reduce = (ReduceImpl) action;
-                Object now = null;
-                Object next = resultIterator.next();
-                Object next2;
-                while (resultIterator.hasNext()) {
-                    next2 = resultIterator.next();
-                    if (now == null) {
-                        now = next;
+            case REDUCE:
+                Object result = ((LinkedList) memoryCache).getFirst();
+                for (Object item : memoryCache) {
+                    if (result == item) {
+                        continue;
                     }
-                    if (next2 != null) { //如果数据源只有一个元素，这里就需要判断一下
-                        now = reduce.actionFunc().apply(now, next2); //累加
-                    } else {
-                        return (R) now;
+                    result = ((ReduceImpl) action).actionFunc().apply(item, result);
+                }
+                return (R) result;
+            case TAKE:
+                List resultTakeList = new ArrayList();
+                for (Object item : memoryCache) {
+                    if (((TakeImpl) action).actionFunc().test(item)) {
+                        resultTakeList.add(item);
                     }
                 }
-                return (R) now;
-            } else if (actionType == ActionType.DROP) {
-                DropImpl drop = (DropImpl) action;
-                List result = new LinkedList();
-                int dropNum = drop.dropNumber();
-                Object next = resultIterator.next();
-                if (drop.isStartWithLeft()) { //drop
-                    while (resultIterator.hasNext()) {
-                        if (dropNum <= 0) { //如果drop完成了，则添加数据
-                            result.add(next);
-                            next = resultIterator.next();
-                        } else { //忽略数据
-                            next = resultIterator.next();
-                        }
-                        dropNum--; //每次减小数量
-                    }
-                    if (isSorted) {
-                        Collections.sort(result);
-                    }
-                    return (R) result;
-                } else { //dropRight
-                    int length = 0;
-                    List list = new LinkedList();
-                    while (resultIterator.hasNext()) {
-                        list.add(next);
-                        next = resultIterator.next();
-                        length++;
-                    }
-                    return (R) list.subList(0, Math.min(length, length - dropNum));
-                }
-            } else if (actionType == ActionType.TAKE) {
-                TakeImpl take = (TakeImpl) action;
-                Predicate predicate = take.actionFunc();
-                List result = new LinkedList();
-                while (resultIterator.hasNext()) { //拿到转换后的数据对象
-                    Object nextData = resultIterator.next();
-                    if (predicate.test(nextData)) { //如果函数测试成立，则直接返回结果
-                        return (R) result;
-                    } else { //否则就添加结果集
-                        result.add(nextData);
-                    }
-                }
-                return (R) result; //函数一直不成立，数据都遍历完了就返回
-            } else {
-                throw new UnsupportedOperationException("执行引擎未知的Action操作！");
-            }
-        } catch (ClassCastException ex) { //中间类型不安全引发异常
-            throw new IllegalStateException("执行引擎逻辑出错，Action操作类型错误，类型转换不能完成！", ex);
+                return (R) resultTakeList;
+            default:
+                throw new UnsupportedOperationException("执行引擎探测到未知Action类型：" + actionType + "，无法完成计算！");
         }
     }
 
     /**
-     * 对迭代器进行排序
+     * 从数据源读取数据
      *
-     * @param iterator   需要排序的迭代器
-     * @param comparator Comparator对象，如果迭代器元素是Comparable的，则可以传null
-     * @param <T>        迭代器元素类型
-     * @return 排好序的迭代器
+     * @param dataSource 数据源迭代器
      */
-    @SuppressWarnings("unchecked")
-    private <T> Iterator<T> sortIterator(Iterator<T> iterator, Comparator<T> comparator) {
-        List<T> list = new LinkedList<>();
-        while (iterator.hasNext()) {
-            list.add(iterator.next());
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void loadData(RepeatableIterator dataSource) {
+        while (dataSource.hasNext()) {
+            this.memoryCache
+                    .add(dataSource.next());
         }
-        if (comparator != null) {
-            list.sort(comparator);
-        } else {
-            list.sort((Comparator) Comparator.naturalOrder());
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void doShuffle() {
+        shuffleMap.clear();
+        for (Object tuple : memoryCache) {
+            Object key = ((Tuple) tuple).key();
+            Object value = ((Tuple) tuple).value();
+            if (shuffleMap.containsKey(key)) {
+                List<Object> valueList = (List<Object>) shuffleMap.get(key);
+                valueList.add(value);
+            } else {
+                List<Object> valueList = new ArrayList<>();
+                valueList.add(value);
+                shuffleMap.put(key, valueList);
+            }
         }
-        return list.iterator();
     }
 }

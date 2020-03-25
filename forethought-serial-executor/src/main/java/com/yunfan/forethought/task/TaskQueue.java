@@ -2,6 +2,7 @@ package com.yunfan.forethought.task;
 
 import com.yunfan.forethought.api.impls.action.Action;
 import com.yunfan.forethought.api.impls.transformation.Transformation;
+import com.yunfan.forethought.api.impls.transformation.common.FilterImpl;
 import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.iterators.RepeatableIterator;
 
@@ -62,6 +63,4 @@ public class TaskQueue<R> {
         }
         return process.process(dataSource);
     }
-
-
 }

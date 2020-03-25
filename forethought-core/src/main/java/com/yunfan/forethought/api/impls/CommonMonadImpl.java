@@ -12,10 +12,7 @@ import com.yunfan.forethought.type.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -202,7 +199,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public List<T> drop(int dropNum) {
+    public List<T> drop(long dropNum) {
         if (dropNum < 0) {
             throw new IllegalArgumentException("drop函数的参数不能小于0");
         }
@@ -226,7 +223,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 取出一些元素后的元素集合
      */
     @Override
-    public List<T> dropRight(int dropNum) {
+    public List<T> dropRight(long dropNum) {
         if (dropNum < 0) {
             throw new IllegalArgumentException("drop函数的参数不能小于0");
         }
@@ -338,15 +335,12 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
     @Override
     @SuppressWarnings("unchecked") //Java API的类型返回Object，没有类型安全问题
     public T[] toArray(@NotNull Class<T> arrayType) {
-        long length = count();
-        if (length != (int) length)
-            throw new UnsupportedOperationException("toArray()调用必须保证Monad元素数量在32位整数范围之内！数组不能容纳更多的元素");
-        T[] result = (T[]) Array.newInstance(arrayType, (int) count());
+        List<T> result = new ArrayList<>();
         Iterator<T> iterator = toIterator();
-        for (int index = 0; index < length; index++) {
-            result[index] = iterator.next();
+        while (iterator.hasNext()) {
+            result.add(iterator.next());
         }
-        return result;
+        return (T[]) result.toArray();
     }
 
     /**

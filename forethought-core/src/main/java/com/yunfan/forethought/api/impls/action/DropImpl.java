@@ -14,7 +14,7 @@ public class DropImpl<T> implements Action<List<T>, Object> {
     /**
      * drop操作删除的数量
      */
-    private final int dropNumber;
+    private final long dropNumber;
 
     /**
      * 是否从起始端抛弃
@@ -26,7 +26,7 @@ public class DropImpl<T> implements Action<List<T>, Object> {
      *
      * @param isStartWithLeft 是否从起始端抛弃
      */
-    public DropImpl(int dropNumber, boolean isStartWithLeft) {
+    public DropImpl(long dropNumber, boolean isStartWithLeft) {
         this.dropNumber = dropNumber;
         this.isStartWithLeft = isStartWithLeft;
     }
@@ -34,7 +34,7 @@ public class DropImpl<T> implements Action<List<T>, Object> {
     /**
      * @return drop操作删除的数量
      */
-    public int dropNumber() {
+    public long dropNumber() {
         return dropNumber;
     }
 

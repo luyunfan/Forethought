@@ -110,7 +110,7 @@ public interface CommonMonad<T> extends Monad<T> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    List<T> drop(int dropNum);
+    List<T> drop(long dropNum);
 
     /**
      * 从集合末端取出一个元素组成集合
@@ -125,7 +125,7 @@ public interface CommonMonad<T> extends Monad<T> {
      * @param dropNum 需要取出的元素数量
      * @return 取出一些元素后的元素集合
      */
-    List<T> dropRight(int dropNum);
+    List<T> dropRight(long dropNum);
 
     /**
      * 对本集合进行排序操作

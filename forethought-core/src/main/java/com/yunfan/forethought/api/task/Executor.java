@@ -42,15 +42,14 @@ public interface Executor {
         if (implList.isEmpty()) { //完全没有执行引擎依赖
             throw new DependencyClassNotFoundException("缺少Executor的依赖！请检查classpath中是否存在执行引擎的实现！");
         }
-        if (implList.size() == 1) { //只有一种实现就直接返回
-            return implList.get(0);
-        } else { //如果有多种实现，则有线返回第一种并行实现
-            for (Executor value : implList) {
-                if (value.type() == ExecutorType.PARALLEL) {
-                    return value;
-                }
+        //如果不存在并行实现，则返回第一个实现
+        //只有一种实现就直接返回
+        //如果有多种实现，则有线返回第一种并行实现
+        for (Executor value : implList) {
+            if (value.type() == ExecutorType.PARALLEL) {
+                return value;
             }
-            return implList.get(0); //如果不存在并行实现，则返回第一个实现
         }
+        return implList.get(0);
     }
 }
