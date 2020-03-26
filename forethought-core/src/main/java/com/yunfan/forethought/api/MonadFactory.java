@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -126,8 +127,8 @@ public class MonadFactory {
      * @param fileName 文本路径
      * @return 包含所有文本字符串的Monad
      */
-    public CommonMonad<String> fromText(@NotNull String fileName) throws FileNotFoundException {
-        return fromText(fileName, System.getProperty("line.separator"), Charset.forName("UTF-8"));
+    public CommonMonad<String> fromLine(@NotNull String fileName) throws FileNotFoundException {
+        return fromText(fileName, System.getProperty("line.separator"), StandardCharsets.UTF_8);
     }
 
     /**
@@ -138,13 +139,10 @@ public class MonadFactory {
      * @return 包含所有文本字符串的Monad
      */
     public CommonMonad<String> fromText(@NotNull String fileName, @NotNull String split, Charset charset) throws FileNotFoundException {
-        Scanner scanner = new Scanner(new FileInputStream(fileName), charset.name()).useDelimiter(split);
+        Scanner scanner = new Scanner(new FileInputStream(fileName), charset.name()).useDelimiter(split+"|\r\n|\r|\n");
         Function<InputStream, String> creator = source -> {
             try {
-                String result = scanner.next();
-                if (result.equals("\n"))
-                    result = scanner.next();
-                return result;
+                return scanner.next();
             } catch (NoSuchElementException e) {
                 return null; //没有了返回null，迭代器就会停止下一次迭代
             }

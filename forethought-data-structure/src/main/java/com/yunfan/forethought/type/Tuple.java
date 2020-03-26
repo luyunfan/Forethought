@@ -26,7 +26,7 @@ public class Tuple<K, V> {
      * @param key   键
      * @param value 值
      */
-    public Tuple(@NotNull K key, @NotNull V value) {
+    public Tuple(@NotNull K key, V value) {
         this.key = key;
         this.value = value;
     }
