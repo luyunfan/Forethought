@@ -201,7 +201,7 @@ public class CommonNilMonadImpl<T> implements CommonMonad<T> {
     }
 
     @Override
-    public CommonMonad<? extends T> union(@NotNull CommonMonad<? extends T> other) {
+    public CommonMonad<T> union(@NotNull CommonMonad<T> other) {
         return other;
     }
 

@@ -312,7 +312,7 @@ public class CommonMonadImpl<T> implements CommonMonad<T> {
      * @return 合并后的数据集合
      */
     @Override
-    public CommonMonad<? extends T> union(@NotNull CommonMonad<? extends T> other) {
+    public CommonMonad<T> union(@NotNull CommonMonad<T> other) {
         return new UnionImpl<>(thisDept, other);
     }
 

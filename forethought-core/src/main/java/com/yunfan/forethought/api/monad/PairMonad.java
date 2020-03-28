@@ -181,7 +181,7 @@ public interface PairMonad<K, V> extends Monad<Tuple<K, V>> {
      * @param other 其它同类型数据集合
      * @return 合并后的数据集合
      */
-    PairMonad<? extends K, ? extends V> union(@NotNull PairMonad<? extends K, ? extends V> other);
+    PairMonad<K, V> union(@NotNull PairMonad<K, V> other);
 
     /**
      * 将集合中所有元素添加到数组中，返回数组

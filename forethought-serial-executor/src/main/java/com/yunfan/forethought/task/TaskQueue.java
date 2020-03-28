@@ -7,13 +7,14 @@ import com.yunfan.forethought.api.monad.Monad;
 import com.yunfan.forethought.iterators.RepeatableIterator;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * 执行任务的队列
  *
  * @param <R> 执行任务最终返回值类型
  */
-public class TaskQueue<R> {
+public class TaskQueue<R> implements Callable<R> {
 
     /**
      * 包含数据源的队列
@@ -52,7 +53,8 @@ public class TaskQueue<R> {
     /**
      * 执行任务
      */
-    R run() {
+    @Override
+    public R call() {
         TransformationProcessor<R> process = new TransformationProcessor<>(action);
         for (Monad<?> trans : tasksQueue) {
             if (trans instanceof Transformation) {

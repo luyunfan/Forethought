@@ -87,7 +87,7 @@ public interface CommonMonad<T> extends Monad<T> {
      * @param other 其它同类型数据集合
      * @return 合并后的数据集合
      */
-    CommonMonad<? extends T> union(@NotNull CommonMonad<? extends T> other);
+    CommonMonad<T> union(@NotNull CommonMonad<T> other);
 
     /**
      * 对本集合进行排序操作，自定义元素排序方法

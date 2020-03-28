@@ -111,7 +111,7 @@ public class PairNilMonadImpl<K, V> implements PairMonad<K, V> {
     }
 
     @Override
-    public PairMonad<? extends K, ? extends V> union(@NotNull PairMonad<? extends K, ? extends V> other) {
+    public PairMonad<K, V> union(@NotNull PairMonad<K, V> other) {
         return other;
     }
 

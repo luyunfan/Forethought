@@ -185,7 +185,7 @@ public class PairMonadImpl<K, V> implements PairMonad<K, V> {
      * @return 合并后的数据集合
      */
     @Override
-    public PairMonad<? extends K, ? extends V> union(@NotNull PairMonad<? extends K, ? extends V> other) {
+    public PairMonad<K, V> union(@NotNull PairMonad<K, V> other) {
         return new UnionImpl<>(thisDept, other);
     }
 

@@ -130,7 +130,10 @@ class TransformationProcessor<R> {
             } else if (task instanceof com.yunfan.forethought
                     .api.impls.transformation.pair.SortImpl) {
                 Comparator comparator = ((com.yunfan.forethought.api.impls.transformation.pair.SortImpl) task).getSortRule();
-                memoryCache.sort((Comparator<? super Object>) comparator);
+                if (!memoryCache.isEmpty()) {
+                    memoryCache.sort((Comparator<? super Object>) comparator);
+                }
+
             } else if (task instanceof UnionImpl) {
                 ((UnionImpl) task).other()
                         .foreach(memoryCache::add);
@@ -197,7 +200,11 @@ class TransformationProcessor<R> {
                 memoryCache.clear();
                 for (Object key : keyArray) {
                     Object value = shuffleMap.get(key);
-                    memoryCache.add(new Tuple<>(key, value));
+                    if (value instanceof List && !((List) value).isEmpty()) {
+                        memoryCache.add(new Tuple<>(key, ((List) value).get(0)));
+                    } else {
+                        memoryCache.add(new Tuple<>(key, value));
+                    }
                 }
             } else {
                 throw new UnsupportedOperationException("执行引擎探测到未知的Transformation类型：" + task.getClass() + "，无法完成计算！");

@@ -45,7 +45,7 @@ public class SerialExecutor implements Executor {
             }
         }
         if (taskQueue != null)
-            return taskQueue.run();
+            return taskQueue.call();
         else
             throw new IllegalStateException("执行引擎中taskQueue未被正确初始化！");
     }
